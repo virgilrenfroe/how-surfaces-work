@@ -397,6 +397,22 @@
       color: var(--dim);
     }
     footer a { color: var(--paper); text-decoration: none; border-bottom: 1px solid var(--accent); }
+    .series-nav {
+      position: absolute;
+      top: clamp(1rem, 3vw, 1.75rem);
+      right: clamp(1rem, 3vw, 2rem);
+      z-index: 5;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .series-nav a {
+      color: var(--paper);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent);
+      pointer-events: auto;
+    }
 
     .err {
       position: fixed;
@@ -445,6 +461,7 @@
   <div class="err" id="err"></div>
 
   <div class="content">
+    <nav class="series-nav"><a href="https://how-textures-work-production.up.railway.app/">Series · Textures</a></nav>
     <header class="hero" id="top">
       <div>
         <p class="hero-kicker">Technique exhibit · Education · Virgil Renfroe</p>
@@ -640,7 +657,7 @@
     </section>
 
     <footer>
-      <div>How Surfaces Work · Virgil Renfroe · Education exhibit</div>
+      <div>How Surfaces Work · Virgil Renfroe · Education exhibit · <a href="https://how-textures-work-production.up.railway.app/">Series · Textures</a></div>
       <div><a href="#top">Back to top</a></div>
     </footer>
   </div>
