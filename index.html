@@ -4,7 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="description" content="How Surfaces Work — a materials lab for art, design, and intro materials science. MatCap vs PBR, roughness, metalness, clearcoat, anisotropy." />
-  <title>How Surfaces Work · Virgil Renfroe</title>
+  <title>How Surfaces Work · Lesson 01 · Materials</title>
+  <meta property="og:title" content="How Surfaces Work · Lesson 01 · Materials" />
+  <meta property="og:description" content="How Surfaces Work — Lesson 01 · Materials. See why chrome, satin, clay, and car paint look different under the same light." />
+  <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -650,17 +653,18 @@
     <nav class="series-nav"><a href="https://how-textures-work-production.up.railway.app/">Series · Textures</a></nav>
     <header class="hero" id="top">
       <div>
-        <p class="hero-kicker">Technique exhibit · Education · Virgil Renfroe</p>
+        <p class="hero-kicker">Lesson 01 · Materials</p>
         <h1>How <em>Surfaces</em> Work</h1>
         <p class="hero-sub">A materials lab for art, design, and intro materials science. Same shape. Different light rules.</p>
         <div class="hero-meta">
-          <div>Audience <span>HS / intro college</span></div>
-          <div>Stack <span>three.js · one WebGL context</span></div>
+          <div>Time <span>20 min</span></div>
+          <div>You will learn <span>why chrome and satin look different</span></div>
+          <div>Try first <span>drag across the big chrome knot to see the real material</span></div>
           <div>Core lesson <span>MatCap fakes · PBR computes</span></div>
         </div>
       </div>
       <div class="hero-stage">
-        <div class="view" data-scene="hero" tabindex="0" aria-label="Hero specimen viewport"></div>
+        <div class="view" data-scene="hero" tabindex="0" aria-label="Large chrome knot. Drag across it to see the real material under the dot pattern."></div>
         <aside class="hero-aside">
         <div class="hero-diagram" aria-label="Lesson map">
           <h2>What you will see</h2>
@@ -681,7 +685,7 @@
     <!-- SPECIMEN 01 MatCap -->
     <section class="specimen" id="s01">
       <div class="view-wrap">
-        <div class="view" data-scene="matcap" tabindex="0" aria-label="MatCap specimen viewport"></div>
+        <div class="view" data-scene="matcap" tabindex="0" aria-label="MatCap specimen: 3D view. Drag to turn."></div>
       </div>
       <aside class="placard">
         <p class="specimen-num">Specimen 01 — MatCap</p>
@@ -707,16 +711,16 @@
     <!-- SPECIMEN 02 PBR -->
     <section class="specimen" id="s02">
       <div class="view-wrap">
-        <div class="view" data-scene="pbr" tabindex="0" aria-label="PBR specimen viewport"></div>
+        <div class="view" data-scene="pbr" tabindex="0" aria-label="PBR specimen: 3D view. Drag to turn."></div>
       </div>
       <aside class="placard">
         <p class="specimen-num">Specimen 02 — PBR Standard</p>
-        <h2 class="specimen-title">Computed light · RoomEnvironment</h2>
+        <h2 class="specimen-title">Computed light · room reflections</h2>
         <div class="lesson">
           <p>PBR estimates how micro-surfaces bounce light.</p>
           <p>Roughness spreads the highlight.</p>
           <p>Metalness switches metal vs dielectric rules.</p>
-          <p>This scene uses a procedural room map (PMREM). No HDR download.</p>
+          <p>The reflections come from a simple virtual room around the object.</p>
         </div>
         <div class="try">
           <strong>Try this</strong>
@@ -743,7 +747,7 @@
     <!-- SPECIMEN 03 Physical -->
     <section class="specimen" id="s03">
       <div class="view-wrap">
-        <div class="view" data-scene="physical" tabindex="0" aria-label="Physical material specimen viewport"></div>
+        <div class="view" data-scene="physical" tabindex="0" aria-label="Physical material specimen: 3D view. Drag to turn."></div>
       </div>
       <aside class="placard">
         <p class="specimen-num">Specimen 03 — Physical</p>
@@ -846,7 +850,7 @@
     </section>
 
     <footer>
-      <div>How Surfaces Work · Virgil Renfroe · Education exhibit · <a href="https://how-textures-work-production.up.railway.app/">Series · Textures</a></div>
+      <div>How Surfaces Work · Lesson 01 · Materials · <a href="https://how-textures-work-production.up.railway.app/">Series · Textures</a></div>
       <div><a href="#top">Back to top</a></div>
     </footer>
   </div>
