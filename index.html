@@ -560,64 +560,60 @@
       .ticker-track { animation: none; }
     }
     .hero {
-      padding-top: clamp(2rem, 5vw, 3.5rem);
+      padding-top: clamp(1rem, 3vw, 2rem);
       align-items: stretch !important;
-      grid-template-columns: minmax(260px, 0.92fr) minmax(0, 1.25fr) !important;
+      grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.25fr) !important;
+      grid-template-rows: auto auto;
+      min-height: 0 !important;
       overflow: visible;
     }
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding-bottom: 1rem;
+    }
+    .hero-copy .scroll-cue { margin-top: 1.75rem; }
     .hero-stage {
       position: relative;
-      min-height: min(78vh, 820px);
-      margin-right: clamp(-1.5rem, -8vw, -5rem);
+      min-height: min(76vh, 780px);
+      margin-right: clamp(-5rem, -6vw, -1.25rem);
     }
     .hero-stage .view[data-scene="hero"] {
       position: absolute;
-      inset: -4% -10% 0 -8%;
-      min-height: 100%;
+      inset: 0;
       width: auto;
       height: auto;
-      touch-action: none;
-      cursor: ew-resize;
+      touch-action: pan-y;
+      cursor: crosshair;
     }
-    .hero-aside {
-      position: absolute;
-      top: 0;
-      right: clamp(0.5rem, 3vw, 1.5rem);
-      left: auto;
-      width: min(100%, 340px);
-      z-index: 4;
-      pointer-events: none;
-      padding-top: 0 !important;
-      justify-content: flex-start !important;
+    /* Glossary: a normal block in the flow, never over the hero */
+    .hero-gloss {
+      grid-column: 1 / -1;
+      position: relative;
     }
-    .hero-aside .hero-diagram,
-    .hero-aside .scroll-cue { pointer-events: auto; }
-    .hero-aside .scroll-cue { margin-top: 1rem; }
+    .hero-gloss .diagram-rows {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: 1.5rem;
+    }
     .series-nav {
-      top: 40px !important;
+      position: relative !important;
+      top: auto !important;
+      right: auto !important;
+      display: flex;
+      justify-content: flex-end;
+      padding: 0.9rem clamp(1.25rem, 4vw, 3rem) 0;
     }
     @media (max-width: 860px) {
-      .hero {
-        grid-template-columns: 1fr !important;
-      }
+      .hero { grid-template-columns: 1fr !important; padding-top: 0.75rem; }
       .hero-stage {
         order: -1;
-        min-height: 48vh;
-        margin-right: -1.25rem;
-        margin-left: -1.25rem;
-        margin-bottom: 0.25rem;
+        min-height: 46vh;
+        margin: 0 -1.25rem 0.5rem;
       }
-      .hero-stage .view[data-scene="hero"] {
-        inset: -2% -12% -8% -12%;
-        opacity: 0.92;
-      }
-      .hero-aside {
-        position: relative;
-        right: auto;
-        width: 100%;
-        margin-top: -2.5rem;
-      }
-      .series-nav { top: 36px !important; }
+      .hero-copy { padding-bottom: 0; }
+      .hero-gloss .diagram-rows { grid-template-columns: 1fr; }
+      .series-nav { padding-top: 0.75rem; }
     }
 
   </style>
@@ -652,7 +648,7 @@
   <div class="content">
     <nav class="series-nav"><a href="https://how-textures-work-production.up.railway.app/">Series · Textures</a></nav>
     <header class="hero" id="top">
-      <div>
+      <div class="hero-copy">
         <p class="hero-kicker">Lesson 01 · Materials</p>
         <h1>How <em>Surfaces</em> Work</h1>
         <p class="hero-sub">A materials lab for art, design, and intro materials science. Same shape. Different light rules.</p>
@@ -662,11 +658,12 @@
           <div>Try first <span>drag across the big chrome knot to see the real material</span></div>
           <div>Core lesson <span>MatCap fakes · PBR computes</span></div>
         </div>
+        <p class="scroll-cue"><a href="#s01">Enter the lab ↓</a></p>
       </div>
       <div class="hero-stage">
         <div class="view" data-scene="hero" tabindex="0" aria-label="Large chrome knot. Drag across it to see the real material under the dot pattern."></div>
-        <aside class="hero-aside">
-        <div class="hero-diagram" aria-label="Lesson map">
+      </div>
+      <div class="hero-diagram hero-gloss" aria-label="Lesson map">
           <h2>What you will see</h2>
           <div class="diagram-rows">
             <div><b>Diffuse</b><span>Light scatters. Soft. No sharp mirror.</span></div>
@@ -677,9 +674,6 @@
             <div><b>Anisotropy</b><span>Brushed grooves stretch the highlight.</span></div>
           </div>
         </div>
-        <p class="scroll-cue"><a href="#s01">Enter the lab ↓</a></p>
-      </aside>
-      </div>
     </header>
 
     <!-- SPECIMEN 01 MatCap -->
