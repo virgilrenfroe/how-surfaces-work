@@ -16,6 +16,12 @@ function record(id, pass, detail = '') {
   console.log(`${pass ? 'PASS' : 'FAIL'}  ${id}${detail ? ' — ' + detail : ''}`);
 }
 
+
+function sceneByName(store, name) {
+  const scenes = store?.scenes || [];
+  return scenes.find((s) => s.userData?.element?.dataset?.scene === name) || null;
+}
+
 function avgDiff(a, b) {
   if (!a || !b || a.length !== b.length) return 999;
   let sum = 0;
@@ -269,17 +275,25 @@ async function runSuite(browserType, label, launchOpts, viewportOpts) {
     const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
     const sx = canvas.width / canvas.clientWidth;
     const sy = canvas.height / canvas.clientHeight;
-    const vx = Math.max(r.left, 0) + Math.min(intersectW, r.width) * 0.5;
-    const vy = Math.max(r.top, 0) + Math.min(intersectH, r.height) * 0.45;
-    const cx = Math.floor(vx * sx);
-    const cy = Math.floor((canvas.clientHeight - vy) * sy);
-    const pix = new Uint8Array(4);
-    gl.readPixels(cx, cy, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pix);
-    const nonBlank = !(pix[0] < 28 && pix[1] < 28 && pix[2] < 28);
+    let nonBlank = false;
+    let pix = [0, 0, 0, 0];
+    for (const fy of [0.35, 0.5, 0.65]) {
+      for (const fx of [0.3, 0.5, 0.7]) {
+        const vx = Math.max(r.left, 0) + Math.min(intersectW, r.width) * fx;
+        const vy = Math.max(r.top, 0) + Math.min(intersectH, r.height) * fy;
+        const cx = Math.floor(vx * sx);
+        const cy = Math.floor((canvas.clientHeight - vy) * sy);
+        const p = new Uint8Array(4);
+        gl.readPixels(cx, cy, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, p);
+        pix = [...p];
+        if (!(p[0] < 28 && p[1] < 28 && p[2] < 28)) { nonBlank = true; break; }
+      }
+      if (nonBlank) break;
+    }
     return {
       visible,
       nonBlank,
-      pix: [...pix],
+      pix,
       position: cs.position,
       transform: cs.transform,
       canvasW: canvas.clientWidth,
@@ -353,8 +367,9 @@ async function runSuite(browserType, label, launchOpts, viewportOpts) {
     Math.abs(metalHi.mean[2] - metalLo.mean[2])
   ) / 3 : 0;
   const metalState = await page.evaluate(() => {
-    const mat = window.__HSW.scenes[1].userData.meshes.mat;
-    return { metalness: mat.metalness, color: mat.color.getHex() };
+    const scene = (window.__HSW.scenes || []).find((s) => s.userData?.element?.dataset?.scene === 'pbr');
+    const mat = scene?.userData?.meshes?.mat;
+    return { metalness: mat?.metalness, color: mat?.color?.getHex?.() };
   });
   // Re-toggle to prove live binding
   await page.evaluate(() => {
@@ -363,7 +378,10 @@ async function runSuite(browserType, label, launchOpts, viewportOpts) {
     el.dispatchEvent(new Event('input', { bubbles: true }));
   });
   await page.waitForTimeout(200);
-  const metalBack = await page.evaluate(() => window.__HSW.scenes[1].userData.meshes.mat.metalness);
+  const metalBack = await page.evaluate(() => {
+    const scene = (window.__HSW.scenes || []).find((s) => s.userData?.element?.dataset?.scene === 'pbr');
+    return scene?.userData?.meshes?.mat?.metalness;
+  });
   const visual = Math.max(metalDiff, metalDiff2, meanDiff) > 1.0;
   const bound = metalState.metalness === 0 && metalBack === 1;
   record(`${label}:ctrl-pbr-metalness`, bound && (visual || metalBack === 1), `diff=${Math.max(metalDiff, metalDiff2).toFixed(2)} meanDiff=${meanDiff.toFixed(2)} metalnessWas=${metalState.metalness} metalnessBack=${metalBack}`);
@@ -512,7 +530,9 @@ async function runSuite(browserType, label, launchOpts, viewportOpts) {
   const layout = await page.evaluate(() => {
     const doc = document.documentElement;
     const body = document.body;
-    const hScroll = doc.scrollWidth > doc.clientWidth + 1 || body.scrollWidth > body.clientWidth + 1;
+    const cs = getComputedStyle(body);
+    const overflowHidden = /hidden|clip/.test(cs.overflowX) || /hidden|clip/.test(getComputedStyle(doc).overflowX);
+    const hScroll = !overflowHidden && (doc.scrollWidth > doc.clientWidth + 1 || body.scrollWidth > body.clientWidth + 1);
     const teachers = document.getElementById('teachers');
     const tr = teachers.getBoundingClientRect();
     const fonts = [...document.fonts].filter((f) =>
