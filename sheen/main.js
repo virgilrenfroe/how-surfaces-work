@@ -460,21 +460,49 @@ const sheenScene = makeScene(document.querySelector('[data-scene="sheen"]'), { b
 }
 
 // —— Specimen 02: Iridescence (bright, multi-hue, thickness map) ——
-const iriScene = makeScene(document.querySelector('[data-scene="iridescence"]'), { bg: 0x1a1e28, camZ: 3.15 });
+// Bright studio env just for iridescence (film color needs something to bounce)
+const iriPmrem = new THREE.PMREMGenerator(renderer);
+const iriRoom = new THREE.Scene();
 {
-  iriScene.environment = envMap;
-  // Brighter neutral base so film colors read
+  const box = new THREE.Mesh(
+    new THREE.BoxGeometry(12, 12, 12),
+    new THREE.MeshBasicMaterial({ color: 0xdde6f5, side: THREE.BackSide })
+  );
+  iriRoom.add(box);
+  const panels = [
+    [0xff66cc, [-4, 2, 0]],
+    [0x44eeff, [4, 2, 0]],
+    [0xffcc44, [0, 3, -4]],
+    [0xffffff, [0, 4, 4]],
+  ];
+  for (const [hex, pos] of panels) {
+    const p = new THREE.Mesh(
+      new THREE.PlaneGeometry(3.2, 3.2),
+      new THREE.MeshBasicMaterial({ color: hex, side: THREE.DoubleSide })
+    );
+    p.position.set(...pos);
+    p.lookAt(0, 0, 0);
+    iriRoom.add(p);
+  }
+}
+const iriEnv = iriPmrem.fromScene(iriRoom, 0.02).texture;
+iriPmrem.dispose();
+
+const iriScene = makeScene(document.querySelector('[data-scene="iridescence"]'), { bg: 0x2e3648, camZ: 3.15 });
+{
+  iriScene.environment = iriEnv;
+  iriScene.background = new THREE.Color(0x2e3648);
   const mat = new THREE.MeshPhysicalMaterial({
-    color: 0xc8d0dc,
-    metalness: 0.35,
-    roughness: 0.12,
+    color: 0x6a7388,
+    metalness: 0.45,
+    roughness: 0.18,
     iridescence: 1,
-    iridescenceIOR: 1.45,
-    iridescenceThicknessRange: [120, 680],
+    iridescenceIOR: 1.6,
+    iridescenceThicknessRange: [90, 700],
     iridescenceThicknessMap: thicknessMap,
-    envMapIntensity: 1.85,
-    clearcoat: 1,
-    clearcoatRoughness: 0.05,
+    envMapIntensity: 2.8,
+    clearcoat: 0.55,
+    clearcoatRoughness: 0.08,
     emissive: new THREE.Color(0x000000),
   });
   const bubble = new THREE.Mesh(sphereGeo, mat);
@@ -483,27 +511,32 @@ const iriScene = makeScene(document.querySelector('[data-scene="iridescence"]'),
   shell.position.set(1.45, -0.05, 0);
   shell.scale.setScalar(0.45);
   iriScene.add(bubble, shell);
-  addFloor(iriScene, -1.15, 0x22262e);
-  // Bright studio keys so cyan/magenta/gold pop
-  const key = addKeyLight(iriScene, 0xffffff, 3.4);
-  const cool = new THREE.DirectionalLight(0x88eeff, 2.2);
-  cool.position.set(-2.8, 1.6, 2.0);
+  addFloor(iriScene, -1.15, 0x3a4254);
+  const key = new THREE.DirectionalLight(0xffffff, 2.2);
+  key.position.set(2.6, 3.4, 1.8);
+  iriScene.add(key);
+  const cool = new THREE.DirectionalLight(0x66f0ff, 3.8);
+  cool.position.set(-3.0, 1.8, 2.2);
   iriScene.add(cool);
-  const warm = new THREE.DirectionalLight(0xffcc88, 1.8);
-  warm.position.set(2.2, 0.4, -2.4);
-  iriScene.add(warm);
-  const fillHi = new THREE.AmbientLight(0xb0c4e0, 0.45);
-  iriScene.add(fillHi);
-  iriScene.userData.meshes = { mat, bubble, shell, key, cool, warm };
+  const magenta = new THREE.DirectionalLight(0xff66cc, 3.4);
+  magenta.position.set(1.5, 0.6, -2.8);
+  iriScene.add(magenta);
+  const gold = new THREE.DirectionalLight(0xffcc55, 3.2);
+  gold.position.set(-1.2, 2.4, -1.6);
+  iriScene.add(gold);
+  const hemi = new THREE.HemisphereLight(0xe8f4ff, 0x304050, 1.1);
+  iriScene.add(hemi);
+  iriScene.userData.meshes = { mat, bubble, shell, key, cool, magenta, gold };
   iriScene.userData.update = (t, dt) => {
     if (!reducedMotion) {
-      bubble.rotation.y += dt * 0.42;
-      bubble.rotation.x = Math.sin(t * 0.45) * 0.35;
-      shell.rotation.y -= dt * 0.48;
-      key.position.x = Math.cos(t * 0.55) * 2.8;
-      key.position.z = Math.sin(t * 0.55) * 2.2;
-      cool.position.x = Math.cos(t * 0.4 + 1) * -2.6;
-      warm.position.z = Math.sin(t * 0.35 + 2) * -2.2;
+      bubble.rotation.y += dt * 0.48;
+      bubble.rotation.x = Math.sin(t * 0.5) * 0.4;
+      shell.rotation.y -= dt * 0.52;
+      key.position.x = Math.cos(t * 0.6) * 2.9;
+      key.position.z = Math.sin(t * 0.6) * 2.3;
+      cool.position.x = Math.cos(t * 0.45 + 1) * -2.8;
+      magenta.position.z = Math.sin(t * 0.4 + 2) * -2.6;
+      gold.position.x = Math.sin(t * 0.35) * 2.0;
     }
   };
 }
@@ -549,7 +582,7 @@ const waxScene = makeScene(document.querySelector('[data-scene="wax"]'), { bg: 0
 
 // —— Centerpiece ——
 function makeCmpScene(name, kind) {
-  const bg = kind === 'iri' ? 0x1a1e28 : 0x14121a;
+  const bg = kind === 'iri' ? 0x2e3648 : 0x14121a;
   const scene = makeScene(document.querySelector(`[data-scene="${name}"]`), { bg, camZ: 2.9 });
   scene.environment = envMap;
   let mat;
@@ -565,17 +598,18 @@ function makeCmpScene(name, kind) {
     });
   } else if (kind === 'iri') {
     mat = new THREE.MeshPhysicalMaterial({
-      color: 0xc8d0dc,
-      metalness: 0.35,
-      roughness: 0.12,
+      color: 0x6a7388,
+      metalness: 0.45,
+      roughness: 0.16,
       iridescence: 1,
-      iridescenceIOR: 1.5,
-      iridescenceThicknessRange: [140, 720],
+      iridescenceIOR: 1.6,
+      iridescenceThicknessRange: [90, 700],
       iridescenceThicknessMap: thicknessMap,
-      envMapIntensity: 1.9,
-      clearcoat: 1,
-      clearcoatRoughness: 0.05,
+      envMapIntensity: 2.8,
+      clearcoat: 0.55,
+      clearcoatRoughness: 0.08,
     });
+    scene.environment = iriEnv;
   } else {
     mat = new THREE.MeshPhysicalMaterial({
       color: 0xc5c0b5,
@@ -717,34 +751,34 @@ iriThickEl.addEventListener('change', onIriThick);
 // Presets tuned for clear cyan / magenta / gold shifts
 const iriPresets = {
   bubble: (m) => {
-    m.color.set(0xd0d8e4);
-    m.metalness = 0.25;
-    m.roughness = 0.1;
+    m.color.set(0x6a7388);
+    m.metalness = 0.4;
+    m.roughness = 0.16;
     m.iridescence = 1;
-    m.iridescenceIOR = 1.35;
-    m.iridescenceThicknessRange = [100, 520]; // cyan–magenta soap
-    m.envMapIntensity = 1.9;
-    m.clearcoat = 1;
+    m.iridescenceIOR = 1.45;
+    m.iridescenceThicknessRange = [70, 520];
+    m.envMapIntensity = 2.9;
+    m.clearcoat = 0.55;
   },
   oil: (m) => {
-    m.color.set(0xb8c0c8);
+    m.color.set(0x3a4048);
     m.metalness = 0.55;
     m.roughness = 0.14;
     m.iridescence = 1;
-    m.iridescenceIOR = 1.7;
-    m.iridescenceThicknessRange = [280, 900]; // gold–green–magenta slick
-    m.envMapIntensity = 2.0;
-    m.clearcoat = 0.85;
+    m.iridescenceIOR = 1.9;
+    m.iridescenceThicknessRange = [200, 1000];
+    m.envMapIntensity = 3.0;
+    m.clearcoat = 0.45;
   },
   beetle: (m) => {
-    m.color.set(0x2a2030);
-    m.metalness = 0.7;
-    m.roughness = 0.18;
+    m.color.set(0x1a1420);
+    m.metalness = 0.8;
+    m.roughness = 0.2;
     m.iridescence = 1;
-    m.iridescenceIOR = 2.1;
-    m.iridescenceThicknessRange = [200, 780]; // deep green–gold–violet shell
-    m.envMapIntensity = 1.75;
-    m.clearcoat = 1;
+    m.iridescenceIOR = 2.3;
+    m.iridescenceThicknessRange = [140, 860];
+    m.envMapIntensity = 2.7;
+    m.clearcoat = 0.7;
   },
 };
 document.querySelectorAll('[data-iri]').forEach((btn) => {
