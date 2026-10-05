@@ -334,14 +334,18 @@ function syncPbrOutputs() {
   roughEl.value = pbrMat.roughness;
   metalEl.value = pbrMat.metalness;
 }
-roughEl.addEventListener('input', () => {
+function onRoughInput() {
   pbrMat.roughness = Number(roughEl.value);
   syncPbrOutputs();
-});
-metalEl.addEventListener('input', () => {
+}
+function onMetalInput() {
   pbrMat.metalness = Number(metalEl.value);
   syncPbrOutputs();
-});
+}
+roughEl.addEventListener('input', onRoughInput);
+roughEl.addEventListener('change', onRoughInput);
+metalEl.addEventListener('input', onMetalInput);
+metalEl.addEventListener('change', onMetalInput);
 
 document.querySelectorAll('[data-pbr]').forEach((btn) => {
   btn.addEventListener('click', () => {
@@ -370,14 +374,18 @@ const coatOut = document.getElementById('phys-coat-out');
 const anisoOut = document.getElementById('phys-aniso-out');
 const { paintMat, brushMat } = physicalScene.userData.meshes;
 
-coatEl.addEventListener('input', () => {
+function onCoatInput() {
   paintMat.clearcoat = Number(coatEl.value);
   coatOut.textContent = Number(coatEl.value).toFixed(2);
-});
-anisoEl.addEventListener('input', () => {
+}
+function onAnisoInput() {
   brushMat.anisotropy = Number(anisoEl.value);
   anisoOut.textContent = Number(anisoEl.value).toFixed(2);
-});
+}
+coatEl.addEventListener('input', onCoatInput);
+coatEl.addEventListener('change', onCoatInput);
+anisoEl.addEventListener('input', onAnisoInput);
+anisoEl.addEventListener('change', onAnisoInput);
 
 document.querySelectorAll('[data-phys]').forEach((btn) => {
   btn.addEventListener('click', () => {
