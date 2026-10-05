@@ -10,7 +10,14 @@ function showErr(msg) {
 window.addEventListener('error', (e) => showErr(e.message || e.error || e));
 window.addEventListener('unhandledrejection', (e) => showErr(e.reason));
 
-const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+try {
+  window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (e) => {
+    reducedMotion = e.matches;
+  });
+} catch (_) {
+  /* older Safari */
+}
 const isNarrow = () => window.innerWidth < 700;
 const pixelCap = () => {
   const dpr = window.devicePixelRatio || 1;
@@ -394,10 +401,14 @@ document.querySelectorAll('[data-phys]').forEach((btn) => {
 let orbitLight = true;
 const orbitEl = document.getElementById('cmp-orbit');
 const orbitOut = document.getElementById('cmp-orbit-out');
-orbitEl.addEventListener('input', () => {
+function syncOrbitLight() {
   orbitLight = Number(orbitEl.value) === 1;
   orbitOut.textContent = orbitLight ? 'ON' : 'OFF';
-});
+  orbitEl.setAttribute('aria-checked', orbitLight ? 'true' : 'false');
+}
+orbitEl.addEventListener('input', syncOrbitLight);
+orbitEl.addEventListener('change', syncOrbitLight);
+syncOrbitLight();
 
 // —— Render loop (single context, scissor per element) ——
 let visible = !document.hidden;
@@ -410,6 +421,8 @@ document.addEventListener('visibilitychange', () => {
     renderer.setAnimationLoop(null);
   }
 });
+// frame counter for QA (incremented inside animate)
+
 
 function updateSize() {
   const w = window.innerWidth;
@@ -428,8 +441,10 @@ window.addEventListener('resize', () => {
 const shared = { lightAngle: 0 };
 let last = performance.now();
 
+let frameCount = 0;
 function animate(now) {
   if (!visible) return;
+  frameCount += 1;
   const dt = Math.min(0.05, (now - last) / 1000);
   last = now;
 
@@ -480,13 +495,17 @@ function animate(now) {
   }
 }
 
-updateSize();
-renderer.setAnimationLoop(animate);
-
 // Expose for verification scripts
 window.__HSW = {
   renderer,
   canvas,
   scenes,
+  shared,
+  get frameCount() { return frameCount; },
+  get reducedMotion() { return reducedMotion; },
+  get orbitLight() { return orbitLight; },
   webglContexts: () => document.querySelectorAll('canvas').length,
 };
+
+updateSize();
+renderer.setAnimationLoop(animate);
