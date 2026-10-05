@@ -377,7 +377,22 @@ const heroScene = makeScene(heroEl, { bg: 0x050505, camZ: 3.15 });
   heroScene.userData.controls.enableZoom = false;
   heroScene.userData.controls.enableRotate = false;
   heroScene.userData.controls.enabled = false;
+  knotGeo.computeBoundingSphere();
+  const heroFitRadius = knotGeo.boundingSphere.radius * knot.scale.x;
+  heroScene.userData.controls.maxDistance = 20;
   heroScene.userData.update = (t, dt) => {
+    // Fit the whole object inside the hero box at any aspect (no hard crop).
+    // Without this the knot fills the RT, dots cover the whole hero rect, and
+    // the knot's topological holes read as an "inverted" mask.
+    {
+      const cam = heroScene.userData.camera;
+      const R = heroFitRadius;
+      const vf = (cam.fov * Math.PI) / 360;
+      const hf = Math.atan(Math.tan(vf) * cam.aspect);
+      const d = (R * 1.06) / Math.sin(Math.min(vf, hf));
+      cam.position.set(0, 0.12, d);
+      heroScene.userData.controls.target.set(0, 0, 0);
+    }
     if (!reducedMotion) {
       knot.rotation.y += dt * 0.28;
       knot.rotation.x = Math.sin(t * 0.35) * 0.15;
