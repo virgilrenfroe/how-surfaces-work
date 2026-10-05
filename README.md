@@ -7,7 +7,7 @@ A materials lab for art, design, and intro materials science — by Virgil Renfr
 GitHub Pages (same source): https://virgilrenfroe.github.io/how-surfaces-work/  
 Repo: https://github.com/virgilrenfroe/how-surfaces-work
 
-Single-page three.js exhibit. One shared WebGL context; specimens render via scissor/viewport into DOM regions (three.js multiple-elements pattern).
+Lesson 01 at `/`. Lesson 03 at `/sheen/`. Single-page three.js exhibits. One shared WebGL context; specimens render via scissor/viewport into DOM regions (three.js multiple-elements pattern).
 
 ## Specimens
 
@@ -45,3 +45,22 @@ These used to appear as on-page copy. The page now speaks only to students and t
 - **QA hooks:** `window.__HSW` (and `window.__HTW` on Textures) exposes renderer, scenes, shared state, frameCount, heroPost, and webglContexts() for `qa.mjs` (Playwright). Run it with `HSW_URL=<url> node qa.mjs`. It checks a single canvas, a non-blank hero, specimen rendering, controls, scissor alignment, anchors, fonts, offscreen skip, reduced motion, and visibility.
 - **Hosting:** Railway (Caddy static Dockerfile + Caddyfile + railway.toml), project `how-surfaces-work`.
 - **Workflow (from now on):** new lesson work goes on a branch with a GitHub PR and a separate preview deploy, not straight to `main`/production.
+
+## Lesson 03 — How Soft Surfaces Shimmer (`/sheen/`)
+
+Same static hosting pattern. Accent: violet `#b388ff` + cyan `#5ce1e6`.
+
+### Specimens
+1. **Sheen** — cushion + sphere; `sheen`, `sheenRoughness`, `sheenColor`
+2. **Iridescence** — thin-film sphere; `iridescence`, `iridescenceIOR`, `iridescenceThicknessRange`
+3. **Soft transmission** — wax/jade/milky plastic; `transmission`, `thickness`, `attenuationColor` / `attenuationDistance` (not clear glass)
+4. **Centerpiece** — sheen vs iridescence vs plain satin under a shared view-angle slider / auto-orbit
+
+### Technical notes (learner UI stays clean)
+- One shared canvas (`#c`); scissor/viewport regions; hero glyph reveal tinted violet.
+- DPR cap ~1.5 mobile / ~2 desktop; offscreen skip; pause when tab hidden; live `prefers-reduced-motion`.
+- ACES + sRGB; RoomEnvironment via PMREM; no HDR downloads.
+- Sliders bind both `input` and `change`. Specimens use `scroll-margin-top`.
+- QA hooks: `window.__HSW` on `/sheen/` (same shape as Lesson 01).
+- Preview workflow: branch + PR + separate Railway preview service — do not merge straight to production.
+
