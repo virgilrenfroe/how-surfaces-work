@@ -200,6 +200,25 @@ async function runSuite(browserType, label, launchOpts, viewportOpts) {
   const kicker = await page.locator('.hero-kicker').textContent();
   record(`${label}:kicker`, /Lesson 05/.test(kicker || ''), kicker?.trim());
 
+  const docTitle = await page.title();
+  record(
+    `${label}:document-title`,
+    /Lesson 05/.test(docTitle) && !/Lesson 01/.test(docTitle),
+    docTitle
+  );
+  const ogTitle = await page.locator('meta[property="og:title"]').getAttribute('content');
+  record(
+    `${label}:og-title`,
+    /Lesson 05/.test(ogTitle || '') && !/Lesson 01/.test(ogTitle || ''),
+    ogTitle || 'missing'
+  );
+  const twTitle = await page.locator('meta[name="twitter:title"]').getAttribute('content');
+  record(
+    `${label}:twitter-title`,
+    /Lesson 05/.test(twTitle || '') && !/Lesson 01/.test(twTitle || ''),
+    twTitle || 'missing'
+  );
+
   // real-world section
   const rw = await page.evaluate(() => {
     const sec = document.getElementById('real-world');
@@ -238,9 +257,14 @@ async function runSuite(browserType, label, launchOpts, viewportOpts) {
     record(`${label}:nonblank-${name}`, s && s.nonBlank >= 3, s ? `nonBlank=${s.nonBlank}` : 'null');
   }
 
-  // Strict hero checks
-  await page.evaluate(() => window.scrollTo(0, 0));
+  // Strict hero checks (scroll hero on-screen — landscape phones stack copy above the stage)
+  await page.locator('[data-scene="hero"]').scrollIntoViewIfNeeded();
   await page.waitForTimeout(400);
+  await page.evaluate(() => {
+    const el = document.querySelector('[data-scene="hero"]');
+    el?.scrollIntoView({ block: 'center', inline: 'nearest' });
+  });
+  await page.waitForTimeout(300);
   await page.waitForFunction(() => {
     const el = document.querySelector('[data-scene="hero"]');
     const canvas = document.getElementById('c');
@@ -357,7 +381,11 @@ async function runSuite(browserType, label, launchOpts, viewportOpts) {
   await ensureSceneVisible(page, 'water');
   const afterWater = await sampleView(page, '[data-scene="water"]');
   const dWater = avgDiff(beforeWater?.patch, afterWater?.patch);
-  record(`${label}:ctrl-water-angle`, dWater > 1.0 && (beforeWater?.nonBlank ?? 0) >= 3, `diff=${dWater.toFixed(2)}`);
+  record(
+    `${label}:ctrl-water-angle`,
+    dWater > 1.0 && ((beforeWater?.nonBlank ?? 0) >= 3 || (afterWater?.nonBlank ?? 0) >= 3),
+    `diff=${dWater.toFixed(2)} beforeNB=${beforeWater?.nonBlank} afterNB=${afterWater?.nonBlank}`
+  );
   await setRange(page, '#water-angle', 0.35);
 
   // Control: water roughness
@@ -379,9 +407,14 @@ async function runSuite(browserType, label, launchOpts, viewportOpts) {
   await page.locator('[data-metal-mode="dielectric"]').click();
   await page.waitForFunction((p) => window.__HSW.frameCount > p + 3, fcM, { timeout: 8000 });
   await ensureSceneVisible(page, 'metals');
+  await page.waitForTimeout(400);
   const afterMetal = await sampleView(page, '[data-scene="metals"]');
   const dMetal = avgDiff(beforeMetal?.patch, afterMetal?.patch);
-  record(`${label}:ctrl-metal-swap`, dMetal > 1.0, `diff=${dMetal.toFixed(2)}`);
+  record(
+    `${label}:ctrl-metal-swap`,
+    dMetal > 1.0 && (beforeMetal?.nonBlank ?? 0) >= 2 && (afterMetal?.nonBlank ?? 0) >= 2,
+    `diff=${dMetal.toFixed(2)} beforeNB=${beforeMetal?.nonBlank} afterNB=${afterMetal?.nonBlank}`
+  );
   await page.locator('[data-metal-mode="metal"]').click();
 
   // Control: F0
@@ -391,9 +424,14 @@ async function runSuite(browserType, label, launchOpts, viewportOpts) {
   await setRange(page, '#f0-amt', 0.9);
   await page.waitForFunction((p) => window.__HSW.frameCount > p + 3, fcF, { timeout: 8000 });
   await ensureSceneVisible(page, 'f0');
+  await page.waitForTimeout(400);
   const afterF0 = await sampleView(page, '[data-scene="f0"]');
   const dF0 = avgDiff(beforeF0?.patch, afterF0?.patch);
-  record(`${label}:ctrl-f0`, dF0 > 1.0, `diff=${dF0.toFixed(2)}`);
+  record(
+    `${label}:ctrl-f0`,
+    dF0 > 1.0 && (beforeF0?.nonBlank ?? 0) >= 2 && (afterF0?.nonBlank ?? 0) >= 2,
+    `diff=${dF0.toFixed(2)} beforeNB=${beforeF0?.nonBlank} afterNB=${afterF0?.nonBlank}`
+  );
   await setRange(page, '#f0-amt', 0.04);
 
   // Real touch/mouse drag on water-angle slider

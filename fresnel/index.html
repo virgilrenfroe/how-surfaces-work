@@ -8,6 +8,9 @@
   <meta property="og:title" content="How Edges Turn to Mirrors · Lesson 05 · Materials" />
   <meta property="og:description" content="Lesson 05 · Materials. See why water mirrors at the horizon and why gold tints its reflections." />
   <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="How Edges Turn to Mirrors · Lesson 05 · Materials" />
+  <meta name="twitter:description" content="Lesson 05 · Materials. See why water mirrors at the horizon and why gold tints its reflections." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -216,6 +219,16 @@
     }
     @media (max-width: 700px) {
       .ctrl input[type="range"] { height: 44px; min-height: 44px; }
+    }
+    @media (max-height: 480px) and (orientation: landscape) {
+      .hero { min-height: auto; padding-top: 1rem; padding-bottom: 0.75rem; }
+      .hero-copy { padding-right: 0; }
+      .hero h1 { font-size: clamp(1.8rem, 6vw, 2.6rem); max-width: none; }
+      .hero-lede { display: none; }
+      .hero-meta { display: none; }
+      .scroll-cue { margin-top: 0.5rem; }
+      .hero-stage, .hero-stage .view[data-scene="hero"] { min-height: 36vh; }
+      .hero-gloss { margin-top: 0.75rem; padding-top: 0.75rem; }
     }
     @media (max-width: 860px) {
       .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 2rem; }
@@ -461,7 +474,7 @@
     </section>
 
     <footer>
-      <div>How Surfaces Work · Lesson 05 · Materials · <a href="/">Lesson 01</a> · <a href="/sheen/">Lesson 03</a></div>
+      <div>How Edges Turn to Mirrors · Lesson 05 · Materials · <a href="/">Lesson 01</a> · <a href="https://how-textures-work-production.up.railway.app/">Lesson 02</a> · <a href="/sheen/">Lesson 03</a></div>
       <div><a href="#top">Back to top</a></div>
     </footer>
   </div>

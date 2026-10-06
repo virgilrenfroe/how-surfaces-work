@@ -133,7 +133,7 @@ function makeHeroPost(accentHex) {
 }
 
 const knotGeo = new THREE.TorusKnotGeometry(0.72, 0.24, 180, 32);
-const sphereGeo = new THREE.SphereGeometry(0.55, 64, 48);
+const sphereGeo = new THREE.SphereGeometry(0.62, 64, 48);
 const planeGeo = new THREE.PlaneGeometry(6.5, 6.5, 1, 1);
 
 const scenes = [];
@@ -308,15 +308,15 @@ const waterScene = makeScene(document.querySelector('[data-scene="water"]'), { b
   waterScene.add(floor);
 
   const waterMat = new THREE.MeshPhysicalMaterial({
-    color: 0xa8d4e8,
+    color: 0xb8dcec,
     metalness: 0,
-    roughness: 0.04,
-    transmission: 0.88,
-    thickness: 0.35,
+    roughness: 0.02,
+    transmission: 0.82,
+    thickness: 0.28,
     ior: 1.333,
     transparent: true,
     opacity: 1,
-    envMapIntensity: 1.45,
+    envMapIntensity: 2.4,
     specularIntensity: 1,
   });
   const water = new THREE.Mesh(planeGeo, waterMat);
@@ -341,9 +341,22 @@ const waterScene = makeScene(document.querySelector('[data-scene="water"]'), { b
 
   const skyDome = new THREE.Mesh(
     new THREE.SphereGeometry(20, 32, 16),
-    new THREE.MeshBasicMaterial({ color: 0x1a3048, side: THREE.BackSide })
+    new THREE.MeshBasicMaterial({ color: 0x152838, side: THREE.BackSide })
   );
   waterScene.add(skyDome);
+  // Bright horizon strip — makes grazing mirror obvious vs looking down
+  const horizon = new THREE.Mesh(
+    new THREE.PlaneGeometry(40, 6),
+    new THREE.MeshBasicMaterial({ color: 0xc8e8ff, side: THREE.DoubleSide })
+  );
+  horizon.position.set(0, 2.2, -12);
+  waterScene.add(horizon);
+  const sunDisc = new THREE.Mesh(
+    new THREE.CircleGeometry(1.4, 32),
+    new THREE.MeshBasicMaterial({ color: 0xfff2d0, side: THREE.DoubleSide })
+  );
+  sunDisc.position.set(4.5, 3.2, -11.5);
+  waterScene.add(sunDisc);
 
   const key = addKeyLight(waterScene, 0xe8f4ff, 2.8);
   const sun = new THREE.DirectionalLight(0xffffff, 2.2);
@@ -427,7 +440,7 @@ const metalsScene = makeScene(document.querySelector('[data-scene="metals"]'), {
   metalsScene.userData.metalMode = 'metal';
   metalsScene.userData.controls.minDistance = 3;
   metalsScene.userData.controls.maxDistance = 9;
-  metalsScene.userData.camera.position.set(0, 0.9, 5.4);
+  metalsScene.userData.camera.position.set(0, 0.75, 4.6);
   metalsScene.userData.controls.target.set(0, 0.15, 0);
   metalsScene.userData.update = (t, dt) => {
     if (!reducedMotion) {
