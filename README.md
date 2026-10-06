@@ -64,3 +64,18 @@ Same static hosting pattern. Accent: violet `#b388ff` + cyan `#5ce1e6`.
 - QA hooks: `window.__HSW` on `/sheen/` (same shape as Lesson 01).
 - Preview workflow: branch + PR + separate Railway preview service — do not merge straight to production.
 
+
+
+## Lesson 09 — How Soft Bodies Glow Inside (`/scatter/`)
+
+Accent: warm peach `#ff8f6b` + amber `#ffc49a`.
+
+### Specimens
+1. **Scatter distance** — wax vs opaque plastic under backlight
+2. **Thin vs thick** — torus rim vs ball; thin parts glow more
+3. **Warm tint** — attenuation color from white toward red-orange
+
+### Notes
+- MeshPhysicalMaterial transmission + attenuationDistance / attenuationColor.
+- QA: `HSW_URL=<url> PW_ROOT=/workspace/materials-demo node qa-scatter.mjs`
+- Preview: Railway `how-surfaces-work-l09-preview` on `lesson-09-scatter`.
