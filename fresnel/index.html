@@ -146,6 +146,10 @@
       border-radius: 999px; cursor: pointer;
     }
     .chip[aria-pressed="true"] { background: var(--accent); color: #061018; border-color: var(--accent); }
+    .reflect-readout {
+      font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent); margin: 0.15rem 0 0.35rem; padding-left: 0.1rem;
+    }
     .fresnel-svg-wrap {
       border: 1px solid var(--line); background: #080c12; padding: 0.75rem 0.85rem 0.5rem; margin-top: 0.5rem;
     }
@@ -317,6 +321,7 @@
               <input id="water-angle" type="range" min="0" max="1" step="0.01" value="0.35" />
               <output id="water-angle-out" for="water-angle">0.35</output>
             </label>
+            <p class="reflect-readout" id="water-reflect-pct" aria-live="polite">Reflected: 4%</p>
             <label class="ctrl">Roughness
               <input id="water-rough" type="range" min="0" max="0.45" step="0.01" value="0.04" />
               <output id="water-rough-out" for="water-rough">0.04</output>

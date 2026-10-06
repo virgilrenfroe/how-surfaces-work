@@ -422,6 +422,31 @@ async function runSuite(browserType, label, launchOpts, viewportOpts) {
     dWater > 1.0 && ((beforeWater?.nonBlank ?? 0) >= 3 || (afterWater?.nonBlank ?? 0) >= 3),
     `diff=${dWater.toFixed(2)} beforeNB=${beforeWater?.nonBlank} afterNB=${afterWater?.nonBlank}`
   );
+
+  // Strong Fresnel mirror check: reflection region must differ between look-down and grazing
+  await ensureSceneVisible(page, 'water');
+  await setRange(page, '#water-angle', 0.1);
+  await waitFrames(page, 5);
+  await ensureSceneVisible(page, 'water');
+  await page.waitForTimeout(350);
+  const lowMirror = await sampleViewAt(page, '[data-scene="water"]', 0.5, 0.62);
+  const lowPct = await page.evaluate(() => document.getElementById('water-reflect-pct')?.textContent || '');
+  await setRange(page, '#water-angle', 0.95);
+  await waitFrames(page, 5);
+  await ensureSceneVisible(page, 'water');
+  await page.waitForTimeout(350);
+  const highMirror = await sampleViewAt(page, '[data-scene="water"]', 0.5, 0.62);
+  const highPct = await page.evaluate(() => document.getElementById('water-reflect-pct')?.textContent || '');
+  const dMirror = avgDiff(lowMirror?.patch, highMirror?.patch);
+  const lowN = Number((lowPct.match(/(\d+)/) || [])[1] || 0);
+  const highN = Number((highPct.match(/(\d+)/) || [])[1] || 0);
+  record(
+    `${label}:ctrl-water-mirror`,
+    dMirror > 12 && highN > lowN + 15,
+    `diff=${dMirror.toFixed(2)} lowPct=${lowPct} highPct=${highPct} lowNB=${lowMirror?.nonBlank} highNB=${highMirror?.nonBlank}`
+  );
+  // Readout exists and uses Schlick range (not stuck)
+  record(`${label}:reflect-readout`, /Reflected:\s*\d+%/.test(lowPct) && /Reflected:\s*\d+%/.test(highPct) && highN >= 40, `low=${lowPct} high=${highPct}`);
   await setRange(page, '#water-angle', 0.35);
 
   // Control: water roughness
@@ -490,11 +515,17 @@ async function runSuite(browserType, label, launchOpts, viewportOpts) {
   await waitReady(page);
   await page.screenshot({ path: path.join(OUT, `${label}-hero.png`) });
   await page.locator('#s01').scrollIntoViewIfNeeded();
-  await page.waitForTimeout(700);
-  await page.screenshot({ path: path.join(OUT, `${label}-water.png`) });
+  await ensureSceneVisible(page, 'water');
+  await setRange(page, '#water-angle', 0.12);
+  await waitFrames(page, 5);
+  await page.waitForTimeout(400);
+  await page.screenshot({ path: path.join(OUT, `${label}-water-low.png`) });
   await setRange(page, '#water-angle', 0.92);
-  await waitFrames(page, 4);
+  await waitFrames(page, 5);
+  await page.waitForTimeout(400);
   await page.screenshot({ path: path.join(OUT, `${label}-water-grazing.png`) });
+  // keep legacy alias for older paths
+  await page.screenshot({ path: path.join(OUT, `${label}-water.png`) });
   await page.locator('#s02').scrollIntoViewIfNeeded();
   await page.waitForTimeout(700);
   await page.screenshot({ path: path.join(OUT, `${label}-metals.png`) });

@@ -288,97 +288,304 @@ const heroScene = makeScene(heroEl, { bg: 0x05070c, camZ: 3.15 });
   };
 }
 
-// —— Specimen 01: Water plane + view angle ——
-const waterScene = makeScene(document.querySelector('[data-scene="water"]'), { bg: 0x0a121c, camZ: 4.2 });
+// —— Specimen 01: Water plane + planar Fresnel reflector ——
+const WATER_F0 = 0.02;
+const waterScene = makeScene(document.querySelector('[data-scene="water"]'), { bg: 0x081018, camZ: 4.2 });
 {
   waterScene.environment = envMap;
-  waterScene.fog = new THREE.Fog(0x0a121c, 6, 18);
+  // Soft fog so the far horizon does not flatten to a white band
+  waterScene.fog = new THREE.Fog(0x081018, 10, 28);
 
   const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(10, 10),
+    new THREE.PlaneGeometry(14, 14),
     new THREE.MeshStandardMaterial({
       map: poolTex,
-      roughness: 0.92,
-      metalness: 0.05,
-      envMapIntensity: 0.3,
+      roughness: 0.95,
+      metalness: 0.02,
+      envMapIntensity: 0.25,
     })
   );
   floor.rotation.x = -Math.PI / 2;
-  floor.position.y = -0.85;
+  floor.position.y = -0.9;
   waterScene.add(floor);
 
-  const waterMat = new THREE.MeshPhysicalMaterial({
-    color: 0xb8dcec,
-    metalness: 0,
-    roughness: 0.02,
-    transmission: 0.82,
-    thickness: 0.28,
-    ior: 1.333,
-    transparent: true,
-    opacity: 1,
-    envMapIntensity: 2.4,
-    specularIntensity: 1,
-  });
-  const water = new THREE.Mesh(planeGeo, waterMat);
-  water.rotation.x = -Math.PI / 2;
-  water.position.y = 0;
-  waterScene.add(water);
+  // Sky + colorful backdrop so the mirror has something vivid to show
+  const skyDome = new THREE.Mesh(
+    new THREE.SphereGeometry(24, 32, 16),
+    new THREE.MeshBasicMaterial({ color: 0x122033, side: THREE.BackSide })
+  );
+  waterScene.add(skyDome);
 
-  // floating markers so reflections read clearly
-  const buoyGeo = new THREE.SphereGeometry(0.18, 24, 16);
-  const buoys = [];
-  const buoyColors = [0xff6b4a, 0xffd166, 0x6ec8ff, 0x9ef0c8];
+  const backdrop = new THREE.Mesh(
+    new THREE.PlaneGeometry(22, 10),
+    new THREE.MeshBasicMaterial({ color: 0x2a5080, side: THREE.DoubleSide })
+  );
+  backdrop.position.set(0, 3.5, -9);
+  waterScene.add(backdrop);
+
+  // Gradient-ish strips for readable mirrored sky bands
+  const bandColors = [0x6ec8ff, 0xffd166, 0xff6b4a, 0x9ef0c8];
   for (let i = 0; i < 4; i++) {
-    const b = new THREE.Mesh(
-      buoyGeo,
-      new THREE.MeshStandardMaterial({ color: buoyColors[i], roughness: 0.45, metalness: 0.1 })
+    const band = new THREE.Mesh(
+      new THREE.PlaneGeometry(20, 0.55),
+      new THREE.MeshBasicMaterial({ color: bandColors[i], side: THREE.DoubleSide })
     );
-    const a = (i / 4) * Math.PI * 2;
-    b.position.set(Math.cos(a) * 1.35, 0.18, Math.sin(a) * 1.35);
+    band.position.set(0, 1.2 + i * 0.85, -8.6);
+    waterScene.add(band);
+  }
+  const sunDisc = new THREE.Mesh(
+    new THREE.CircleGeometry(1.1, 32),
+    new THREE.MeshBasicMaterial({ color: 0xfff0c8, side: THREE.DoubleSide })
+  );
+  sunDisc.position.set(-3.2, 4.2, -8.4);
+  waterScene.add(sunDisc);
+
+  // Large, saturated buoys — clear when mirrored
+  const buoyGeo = new THREE.SphereGeometry(0.38, 48, 32);
+  const buoys = [];
+  const buoySpecs = [
+    { c: 0xff4d2e, x: -1.35, z: 0.55 },
+    { c: 0xffd000, x: 0.15, z: -1.15 },
+    { c: 0x3ad0ff, x: 1.4, z: 0.35 },
+  ];
+  for (const s of buoySpecs) {
+    const mat = new THREE.MeshStandardMaterial({
+      color: s.c,
+      roughness: 0.28,
+      metalness: 0.05,
+      emissive: new THREE.Color(s.c).multiplyScalar(0.12),
+      envMapIntensity: 0.6,
+    });
+    const b = new THREE.Mesh(buoyGeo, mat);
+    b.position.set(s.x, 0.38, s.z);
     waterScene.add(b);
     buoys.push(b);
   }
 
-  const skyDome = new THREE.Mesh(
-    new THREE.SphereGeometry(20, 32, 16),
-    new THREE.MeshBasicMaterial({ color: 0x152838, side: THREE.BackSide })
-  );
-  waterScene.add(skyDome);
-  // Bright horizon strip — makes grazing mirror obvious vs looking down
-  const horizon = new THREE.Mesh(
-    new THREE.PlaneGeometry(40, 6),
-    new THREE.MeshBasicMaterial({ color: 0xc8e8ff, side: THREE.DoubleSide })
-  );
-  horizon.position.set(0, 2.2, -12);
-  waterScene.add(horizon);
-  const sunDisc = new THREE.Mesh(
-    new THREE.CircleGeometry(1.4, 32),
-    new THREE.MeshBasicMaterial({ color: 0xfff2d0, side: THREE.DoubleSide })
-  );
-  sunDisc.position.set(4.5, 3.2, -11.5);
-  waterScene.add(sunDisc);
+  // —— Planar reflection RT (Reflector-style) + Schlick blend shader ——
+  const isPhone = () => window.innerWidth < 700 || (window.matchMedia('(pointer:coarse)').matches && window.innerWidth < 900);
+  const reflSize = () => {
+    if (isPhone()) return 256;
+    return 512;
+  };
+  let rtW = reflSize();
+  const reflectionRT = new THREE.WebGLRenderTarget(rtW, rtW, {
+    type: THREE.HalfFloatType,
+    minFilter: THREE.LinearFilter,
+    magFilter: THREE.LinearFilter,
+  });
+  reflectionRT.texture.colorSpace = THREE.SRGBColorSpace;
 
-  const key = addKeyLight(waterScene, 0xe8f4ff, 2.8);
-  const sun = new THREE.DirectionalLight(0xffffff, 2.2);
-  sun.position.set(3, 6, 2);
+  const virtualCamera = new THREE.PerspectiveCamera();
+  const reflectorPlane = new THREE.Plane();
+  const normal = new THREE.Vector3();
+  const reflectorWorldPosition = new THREE.Vector3();
+  const cameraWorldPosition = new THREE.Vector3();
+  const rotationMatrix = new THREE.Matrix4();
+  const lookAtPosition = new THREE.Vector3(0, 0, -1);
+  const clipPlane = new THREE.Vector4();
+  const view = new THREE.Vector3();
+  const target = new THREE.Vector3();
+  const q = new THREE.Vector4();
+  const textureMatrix = new THREE.Matrix4();
+
+  const waterUniforms = {
+    tDiffuse: { value: reflectionRT.texture },
+    textureMatrix: { value: textureMatrix },
+    uWaterTint: { value: new THREE.Color(0x1a4860) },
+    uF0: { value: WATER_F0 },
+    uRough: { value: 0.04 },
+    uTime: { value: 0 },
+  };
+
+  const waterMat = new THREE.ShaderMaterial({
+    uniforms: waterUniforms,
+    transparent: true,
+    depthWrite: false,
+    side: THREE.FrontSide,
+    vertexShader: `
+      uniform mat4 textureMatrix;
+      varying vec4 vReflectUv;
+      varying vec3 vWorldPos;
+      varying vec3 vWorldNormal;
+      void main() {
+        vec4 worldPos = modelMatrix * vec4(position, 1.0);
+        vWorldPos = worldPos.xyz;
+        vWorldNormal = normalize(mat3(modelMatrix) * normal);
+        vReflectUv = textureMatrix * vec4(position, 1.0);
+        gl_Position = projectionMatrix * viewMatrix * worldPos;
+      }
+    `,
+    fragmentShader: `
+      precision highp float;
+      uniform sampler2D tDiffuse;
+      uniform vec3 uWaterTint;
+      uniform float uF0;
+      uniform float uRough;
+      uniform float uTime;
+      varying vec4 vReflectUv;
+      varying vec3 vWorldPos;
+      varying vec3 vWorldNormal;
+
+      void main() {
+        vec3 N = normalize(vWorldNormal);
+        vec3 V = normalize(cameraPosition - vWorldPos);
+        float cosTheta = clamp(dot(N, V), 0.0, 1.0);
+        // Schlick Fresnel (same formula as the readout)
+        float x = 1.0 - cosTheta;
+        float F = uF0 + (1.0 - uF0) * x * x * x * x * x;
+
+        // Ripple / normal-style UV distortion controlled by roughness
+        float amp = uRough * 0.085;
+        vec2 ripple = vec2(
+          sin(vWorldPos.x * 3.2 + uTime * 1.6) + sin(vWorldPos.z * 2.4 + uTime * 1.1),
+          cos(vWorldPos.z * 3.0 - uTime * 1.3) + cos(vWorldPos.x * 2.1 + uTime * 0.9)
+        ) * amp;
+        // Also blur-ish by sampling offset when rough
+        vec4 uv = vReflectUv;
+        uv.xy += ripple * uv.w;
+
+        vec4 reflA = texture2DProj(tDiffuse, uv);
+        vec4 reflB = texture2DProj(tDiffuse, uv + vec4(amp * 4.0, amp * 2.0, 0.0, 0.0) * uv.w);
+        vec4 reflC = texture2DProj(tDiffuse, uv + vec4(-amp * 3.0, amp * 5.0, 0.0, 0.0) * uv.w);
+        float blurW = smoothstep(0.02, 0.35, uRough);
+        vec3 refl = mix(reflA.rgb, (reflA.rgb + reflB.rgb + reflC.rgb) / 3.0, blurW);
+
+        // Low F → mostly clear water over the checker floor (alpha low).
+        // High F → opaque mirror of spheres and sky.
+        vec3 col = mix(uWaterTint, refl, clamp(F * 1.05, 0.0, 1.0));
+        float alpha = clamp(F * 1.15 + 0.06, 0.08, 0.98);
+        gl_FragColor = vec4(col, alpha);
+      }
+    `,
+  });
+
+  const waterGeo = new THREE.PlaneGeometry(12, 12, 1, 1);
+  const water = new THREE.Mesh(waterGeo, waterMat);
+  water.rotation.x = -Math.PI / 2;
+  water.position.y = 0.001;
+  waterScene.add(water);
+
+  const key = addKeyLight(waterScene, 0xe8f4ff, 2.6);
+  const sun = new THREE.DirectionalLight(0xffffff, 2.4);
+  sun.position.set(2.5, 7, 1.5);
   waterScene.add(sun);
 
-  waterScene.userData.meshes = { water, waterMat, key, buoys };
+  function resizeReflectionRT() {
+    const s = reflSize();
+    if (reflectionRT.width !== s) reflectionRT.setSize(s, s);
+  }
+
+  /** Reflector-style mirrored camera → reflectionRT. Call only when water view is on-screen. */
+  function renderReflection(renderer, camera) {
+    resizeReflectionRT();
+    water.updateMatrixWorld(true);
+    reflectorWorldPosition.setFromMatrixPosition(water.matrixWorld);
+    cameraWorldPosition.setFromMatrixPosition(camera.matrixWorld);
+    rotationMatrix.extractRotation(water.matrixWorld);
+
+    normal.set(0, 0, 1);
+    normal.applyMatrix4(rotationMatrix);
+
+    view.subVectors(reflectorWorldPosition, cameraWorldPosition);
+    if (view.dot(normal) > 0) return; // facing away
+
+    view.reflect(normal).negate();
+    view.add(reflectorWorldPosition);
+
+    rotationMatrix.extractRotation(camera.matrixWorld);
+    lookAtPosition.set(0, 0, -1);
+    lookAtPosition.applyMatrix4(rotationMatrix);
+    lookAtPosition.add(cameraWorldPosition);
+
+    target.subVectors(reflectorWorldPosition, lookAtPosition);
+    target.reflect(normal).negate();
+    target.add(reflectorWorldPosition);
+
+    virtualCamera.position.copy(view);
+    virtualCamera.up.set(0, 1, 0);
+    virtualCamera.up.applyMatrix4(rotationMatrix);
+    virtualCamera.up.reflect(normal);
+    virtualCamera.lookAt(target);
+    virtualCamera.far = camera.far;
+    virtualCamera.aspect = camera.aspect;
+    virtualCamera.fov = camera.fov;
+    virtualCamera.updateProjectionMatrix();
+    virtualCamera.updateMatrixWorld();
+    virtualCamera.projectionMatrix.copy(camera.projectionMatrix);
+
+    textureMatrix.set(
+      0.5, 0.0, 0.0, 0.5,
+      0.0, 0.5, 0.0, 0.5,
+      0.0, 0.0, 0.5, 0.5,
+      0.0, 0.0, 0.0, 1.0
+    );
+    textureMatrix.multiply(virtualCamera.projectionMatrix);
+    textureMatrix.multiply(virtualCamera.matrixWorldInverse);
+    textureMatrix.multiply(water.matrixWorld);
+
+    // Oblique near clip (Lengyel) so the mirror plane does not self-reflect
+    reflectorPlane.setFromNormalAndCoplanarPoint(normal, reflectorWorldPosition);
+    reflectorPlane.applyMatrix4(virtualCamera.matrixWorldInverse);
+    clipPlane.set(reflectorPlane.normal.x, reflectorPlane.normal.y, reflectorPlane.normal.z, reflectorPlane.constant);
+    const projectionMatrix = virtualCamera.projectionMatrix;
+    q.x = (Math.sign(clipPlane.x) + projectionMatrix.elements[8]) / projectionMatrix.elements[0];
+    q.y = (Math.sign(clipPlane.y) + projectionMatrix.elements[9]) / projectionMatrix.elements[5];
+    q.z = -1.0;
+    q.w = (1.0 + projectionMatrix.elements[10]) / projectionMatrix.elements[14];
+    clipPlane.multiplyScalar(2.0 / clipPlane.dot(q));
+    projectionMatrix.elements[2] = clipPlane.x;
+    projectionMatrix.elements[6] = clipPlane.y;
+    projectionMatrix.elements[10] = clipPlane.z + 1.0 - 0.003;
+    projectionMatrix.elements[14] = clipPlane.w;
+
+    const prevRT = renderer.getRenderTarget();
+    const prevTone = renderer.toneMapping;
+    const prevAutoClear = renderer.autoClear;
+    water.visible = false;
+    renderer.setRenderTarget(reflectionRT);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.autoClear = true;
+    renderer.setClearColor(0x122033, 1);
+    renderer.clear();
+    renderer.render(waterScene, virtualCamera);
+    renderer.setRenderTarget(prevRT);
+    renderer.toneMapping = prevTone;
+    renderer.autoClear = prevAutoClear;
+    water.visible = true;
+  }
+
+  waterScene.userData.meshes = { water, waterMat, waterUniforms, key, buoys, reflectionRT };
+  waterScene.userData.renderReflection = renderReflection;
   waterScene.userData.controls.enableZoom = false;
   waterScene.userData.controls.enableRotate = false;
   waterScene.userData.controls.enabled = false;
   waterScene.userData.waterAngle = 0.35;
+  waterScene.userData.waterF0 = WATER_F0;
+  waterScene.userData.getReflectance = () => {
+    // Match the fragment Schlick using N=(0,1,0) and view from surface origin to camera
+    const cam = waterScene.userData.camera;
+    const vx = cam.position.x;
+    const vy = cam.position.y;
+    const vz = cam.position.z;
+    const len = Math.sqrt(vx * vx + vy * vy + vz * vz) || 1;
+    const cosTheta = Math.min(1, Math.max(0, vy / len));
+    const x = 1 - cosTheta;
+    return WATER_F0 + (1 - WATER_F0) * x * x * x * x * x;
+  };
   waterScene.userData.update = (t, dt) => {
     const u = waterScene.userData.waterAngle; // 0 = look down, 1 = grazing
-    const elev = THREE.MathUtils.lerp(1.55, 0.12, u);
-    const dist = THREE.MathUtils.lerp(3.4, 5.2, u);
+    // More overhead at 0, true skim at 1 — so Schlick spans ~4% → high 60s%
+    const elev = THREE.MathUtils.lerp(2.85, 0.14, u);
+    const dist = THREE.MathUtils.lerp(1.15, 5.6, u);
     const cam = waterScene.userData.camera;
-    cam.position.set(0, elev, dist);
-    cam.lookAt(0, 0.02, 0);
-    waterScene.userData.controls.target.set(0, 0.02, 0);
+    cam.position.set(0.15, elev, dist);
+    cam.lookAt(0, 0.05, 0);
+    waterScene.userData.controls.target.set(0, 0.05, 0);
+    waterUniforms.uTime.value = t;
     if (!reducedMotion) {
       for (let i = 0; i < buoys.length; i++) {
-        buoys[i].position.y = 0.16 + Math.sin(t * 1.4 + i) * 0.04;
+        buoys[i].position.y = 0.38 + Math.sin(t * 1.5 + i * 1.7) * 0.035;
       }
     }
   };
@@ -435,7 +642,22 @@ const metalsScene = makeScene(document.querySelector('[data-scene="metals"]'), {
     };
   });
   addFloor(metalsScene, -0.55, 0x141a22);
-  const key = addKeyLight(metalsScene, 0xe8f4ff, 2.6);
+  // Studio cards so metal F0 tint is obvious in reflections
+  const cardL = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.4, 3.2),
+    new THREE.MeshBasicMaterial({ color: 0xffe8d0, side: THREE.DoubleSide })
+  );
+  cardL.position.set(-3.2, 1.2, -0.4);
+  cardL.rotation.y = Math.PI / 2.6;
+  metalsScene.add(cardL);
+  const cardR = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.4, 3.2),
+    new THREE.MeshBasicMaterial({ color: 0xd0e8ff, side: THREE.DoubleSide })
+  );
+  cardR.position.set(3.2, 1.2, -0.4);
+  cardR.rotation.y = -Math.PI / 2.6;
+  metalsScene.add(cardR);
+  const key = addKeyLight(metalsScene, 0xe8f4ff, 2.8);
   metalsScene.userData.meshes = { mats, meshes, key, specs };
   metalsScene.userData.metalMode = 'metal';
   metalsScene.userData.controls.minDistance = 3;
@@ -486,10 +708,21 @@ const f0Scene = makeScene(document.querySelector('[data-scene="f0"]'), { bg: 0x0
   mesh.position.y = 0.2;
   f0Scene.add(mesh);
   addFloor(f0Scene, -0.85, 0x121820);
-  const key = addKeyLight(f0Scene, 0xe8f4ff, 2.5);
-  const graze = new THREE.DirectionalLight(0xffffff, 2.4);
+  const key = addKeyLight(f0Scene, 0xe8f4ff, 2.8);
+  const graze = new THREE.DirectionalLight(0xffffff, 2.6);
   graze.position.set(-3.2, 0.4, 0.5);
   f0Scene.add(graze);
+  const warmFill = new THREE.DirectionalLight(0xffc878, 1.6);
+  warmFill.position.set(2.8, 1.0, 2.2);
+  f0Scene.add(warmFill);
+  // Colored cards so F0 lift paints the face
+  const f0Card = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.2, 2.8),
+    new THREE.MeshBasicMaterial({ color: 0xffb060, side: THREE.DoubleSide })
+  );
+  f0Card.position.set(-2.6, 1.0, 0.2);
+  f0Card.rotation.y = Math.PI / 2.4;
+  f0Scene.add(f0Card);
   f0Scene.userData.meshes = { mat, mesh, key, graze };
   f0Scene.userData.f0 = 0.04;
   f0Scene.userData.controls.enableZoom = false;
@@ -548,17 +781,26 @@ const f0Scene = makeScene(document.querySelector('[data-scene="f0"]'), { bg: 0x0
 }
 
 // —— UI: Water ——
-const waterMat = waterScene.userData.meshes.waterMat;
+const waterUniforms = waterScene.userData.meshes.waterUniforms;
 const waterAngleEl = document.getElementById('water-angle');
 const waterRoughEl = document.getElementById('water-rough');
 const waterAngleOut = document.getElementById('water-angle-out');
 const waterRoughOut = document.getElementById('water-rough-out');
+const waterReflectPct = document.getElementById('water-reflect-pct');
 
 function syncWater() {
   waterScene.userData.waterAngle = Number(waterAngleEl.value);
-  waterMat.roughness = Number(waterRoughEl.value);
+  const rough = Number(waterRoughEl.value);
+  waterUniforms.uRough.value = rough;
   waterAngleOut.textContent = Number(waterAngleEl.value).toFixed(2);
-  waterRoughOut.textContent = Number(waterRoughEl.value).toFixed(2);
+  waterRoughOut.textContent = rough.toFixed(2);
+  // Keep camera in sync before reading Schlick so the % matches what you see
+  if (waterScene.userData.update) {
+    waterScene.userData.update(performance.now() * 0.001, 0);
+  }
+  const F = waterScene.userData.getReflectance();
+  const pct = Math.round(F * 100);
+  if (waterReflectPct) waterReflectPct.textContent = `Reflected: ${pct}%`;
 }
 function onWaterAngle() { syncWater(); }
 function onWaterRough() { syncWater(); }
@@ -690,6 +932,17 @@ function animate(now) {
     if (scene.userData.update) scene.userData.update(now * 0.001, dt);
     scene.userData.controls.update();
 
+    // Planar reflection pass for water (half-res on phones; skip when offscreen)
+    if (scene.userData.renderReflection) {
+      const cam = scene.userData.camera;
+      cam.aspect = width / height;
+      cam.updateProjectionMatrix();
+      scene.userData.renderReflection(renderer, cam);
+      // Restore scissor/viewport after RT switch
+      renderer.setScissorTest(true);
+      renderer.setClearColor(0x05070c, 1);
+    }
+
     renderer.setViewport(left, bottom, width, height);
     renderer.setScissor(left, bottom, width, height);
 
@@ -753,6 +1006,7 @@ window.__HSW = {
   waterScene,
   metalsScene,
   f0Scene,
+  WATER_F0,
 };
 
 updateSize();
