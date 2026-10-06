@@ -436,20 +436,20 @@ const waterScene = makeScene(document.querySelector('[data-scene="water"]'), { b
         float F = uF0 + (1.0 - uF0) * x * x * x * x * x;
 
         // Ripple / normal-style UV distortion controlled by roughness
-        float amp = uRough * 0.085;
+        float amp = uRough * 0.28;
         vec2 ripple = vec2(
-          sin(vWorldPos.x * 3.2 + uTime * 1.6) + sin(vWorldPos.z * 2.4 + uTime * 1.1),
-          cos(vWorldPos.z * 3.0 - uTime * 1.3) + cos(vWorldPos.x * 2.1 + uTime * 0.9)
+          sin(vWorldPos.x * 4.0 + uTime * 1.6) + 0.6 * sin(vWorldPos.z * 2.8 + uTime * 1.1),
+          cos(vWorldPos.z * 3.6 - uTime * 1.3) + 0.6 * cos(vWorldPos.x * 2.4 + uTime * 0.9)
         ) * amp;
-        // Also blur-ish by sampling offset when rough
         vec4 uv = vReflectUv;
-        uv.xy += ripple * uv.w;
+        uv.xy += ripple * max(uv.w, 0.001);
 
         vec4 reflA = texture2DProj(tDiffuse, uv);
-        vec4 reflB = texture2DProj(tDiffuse, uv + vec4(amp * 4.0, amp * 2.0, 0.0, 0.0) * uv.w);
-        vec4 reflC = texture2DProj(tDiffuse, uv + vec4(-amp * 3.0, amp * 5.0, 0.0, 0.0) * uv.w);
-        float blurW = smoothstep(0.02, 0.35, uRough);
-        vec3 refl = mix(reflA.rgb, (reflA.rgb + reflB.rgb + reflC.rgb) / 3.0, blurW);
+        vec4 reflB = texture2DProj(tDiffuse, uv + vec4(amp * 12.0, amp * 6.0, 0.0, 0.0) * max(uv.w, 0.001));
+        vec4 reflC = texture2DProj(tDiffuse, uv + vec4(-amp * 9.0, amp * 14.0, 0.0, 0.0) * max(uv.w, 0.001));
+        vec4 reflD = texture2DProj(tDiffuse, uv + vec4(amp * 5.0, -amp * 11.0, 0.0, 0.0) * max(uv.w, 0.001));
+        float blurW = smoothstep(0.01, 0.28, uRough);
+        vec3 refl = mix(reflA.rgb, (reflA.rgb + reflB.rgb + reflC.rgb + reflD.rgb) * 0.25, blurW);
 
         // Low F → mostly clear water over the checker floor (alpha low).
         // High F → opaque mirror of spheres and sky.

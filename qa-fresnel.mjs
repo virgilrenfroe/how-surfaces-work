@@ -449,17 +449,25 @@ async function runSuite(browserType, label, launchOpts, viewportOpts) {
   record(`${label}:reflect-readout`, /Reflected:\s*\d+%/.test(lowPct) && /Reflected:\s*\d+%/.test(highPct) && highN >= 40, `low=${lowPct} high=${highPct}`);
   await setRange(page, '#water-angle', 0.35);
 
-  // Control: water roughness
+  // Control: water roughness (sample mirror region at mid-grazing so ripples read)
   await ensureSceneVisible(page, 'water');
-  const beforeRough = await sampleView(page, '[data-scene="water"]');
+  await setRange(page, '#water-angle', 0.75);
+  await setRange(page, '#water-rough', 0.02);
+  await waitFrames(page, 4);
+  await ensureSceneVisible(page, 'water');
+  await page.waitForTimeout(300);
+  const beforeRough = await sampleViewAt(page, '[data-scene="water"]', 0.5, 0.58);
   const fcR = await page.evaluate(() => window.__HSW.frameCount);
-  await setRange(page, '#water-rough', 0.4);
-  await page.waitForFunction((p) => window.__HSW.frameCount > p + 3, fcR, { timeout: 8000 });
+  await setRange(page, '#water-rough', 0.42);
+  await page.waitForFunction((p) => window.__HSW.frameCount > p + 4, fcR, { timeout: 8000 });
   await ensureSceneVisible(page, 'water');
-  const afterRough = await sampleView(page, '[data-scene="water"]');
+  await page.waitForTimeout(350);
+  const afterRough = await sampleViewAt(page, '[data-scene="water"]', 0.5, 0.58);
   const dRough = avgDiff(beforeRough?.patch, afterRough?.patch);
-  record(`${label}:ctrl-water-rough`, dRough > 0.8, `diff=${dRough.toFixed(2)}`);
+  const roughOk = await page.evaluate(() => Math.abs((window.__HSW.waterScene?.userData?.meshes?.waterUniforms?.uRough?.value ?? 0) - 0.42) < 0.02);
+  record(`${label}:ctrl-water-rough`, roughOk && dRough > 1.5, `diff=${dRough.toFixed(2)} roughOk=${roughOk}`);
   await setRange(page, '#water-rough', 0.04);
+  await setRange(page, '#water-angle', 0.35);
 
   // Control: metal mode toggle
   await ensureSceneVisible(page, 'metals');
