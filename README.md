@@ -64,3 +64,21 @@ Same static hosting pattern. Accent: violet `#b388ff` + cyan `#5ce1e6`.
 - QA hooks: `window.__HSW` on `/sheen/` (same shape as Lesson 01).
 - Preview workflow: branch + PR + separate Railway preview service — do not merge straight to production.
 
+
+## Lesson 05 — How Edges Turn to Mirrors (`/fresnel/`)
+
+Same static hosting pattern. Accent: ice cobalt `#6ec8ff` + mint `#9ef0c8`.
+
+### Specimens
+1. **Water plane** — view-angle slider shows Fresnel rise toward grazing; roughness softens the edge
+2. **Metal color** — plastic / glass / gold / copper / aluminum; toggle swaps metals to dielectrics
+3. **F0 + Schlick** — F0 slider (0.02–1.0) with live Schlick curve SVG; roughness softens the glow
+
+### Technical notes (learner UI stays clean)
+- One shared canvas (`#c`); scissor/viewport regions; hero v3 alpha-dot mask + lens reveal tinted ice cobalt.
+- DPR cap ~1.5 mobile / ~2 desktop; offscreen skip; pause when tab hidden; live `prefers-reduced-motion`.
+- ACES + sRGB; RoomEnvironment via PMREM; procedural textures only; no HDR downloads.
+- Sliders bind both `input` and `change`. Range inputs are 44px tall on coarse pointer or ≤700px.
+- OrbitControls disabled wherever a slider owns the camera (water angle, F0 auto-orbit).
+- QA: `qa-fresnel.mjs` with `HSW_URL=<url> PW_ROOT=/workspace/materials-demo node qa-fresnel.mjs`.
+- Preview: Railway service `how-surfaces-work-l05-preview` on branch `lesson-05-fresnel`.
