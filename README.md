@@ -64,3 +64,17 @@ Same static hosting pattern. Accent: violet `#b388ff` + cyan `#5ce1e6`.
 - QA hooks: `window.__HSW` on `/sheen/` (same shape as Lesson 01).
 - Preview workflow: branch + PR + separate Railway preview service — do not merge straight to production.
 
+
+## Lesson 11 — How Brushed Metal Streaks (`/aniso/`)
+
+Accent: brushed-steel silver-blue `#9eb7ff`.
+
+### Specimens
+1. **Brush streak** — anisotropy strength + brush angle on a metal disc
+2. **Compare** — isotropic chrome sphere vs anisotropic brushed disc
+3. **Satin weave** — sheen + anisotropy along cloth direction
+4. **Hair cards** — fiber anisotropy along strands
+
+### Notes
+- MeshPhysicalMaterial `anisotropy` / `anisotropyRotation` (three.js 0.170) with computed tangents and a procedural brushed normal map.
+- QA: `HSW_URL=<url> PW_ROOT=/workspace/materials-demo node qa-aniso.mjs`
