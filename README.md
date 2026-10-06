@@ -64,3 +64,19 @@ Same static hosting pattern. Accent: violet `#b388ff` + cyan `#5ce1e6`.
 - QA hooks: `window.__HSW` on `/sheen/` (same shape as Lesson 01).
 - Preview workflow: branch + PR + separate Railway preview service — do not merge straight to production.
 
+
+
+## Lesson 07 — How Glass Bends What You See (`/refract/`)
+
+Accent: aqua glass `#2ee6d6` + `#9af5ea`.
+
+### Specimens
+1. **IOR** — sphere + slab over typed checker; IOR 1.0–2.4 with Air/Water/Glass/Diamond presets
+2. **Lens thickness** — magnifies the grid as thickness rises
+3. **Prism dispersion** — subtle MeshPhysicalMaterial.dispersion toggle
+4. **Gem TIR** — same cut, glass n≈1.5 vs diamond n≈2.4
+
+### Notes
+- One shared canvas; hero v3 aqua mask; transmission + ior + thickness via MeshPhysicalMaterial.
+- QA: `HSW_URL=<url> PW_ROOT=/workspace/materials-demo node qa-refract.mjs`
+- Preview: Railway `how-surfaces-work-l07-preview` on branch `lesson-07-refract`.
