@@ -3,27 +3,28 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="description" content="How Surfaces Work — a materials lab for art, design, and intro materials science. MatCap vs PBR, roughness, metalness, clearcoat, anisotropy." />
-  <title>How Surfaces Work · Lesson 01 · Materials</title>
-  <meta property="og:title" content="How Surfaces Work · Lesson 01 · Materials" />
-  <meta property="og:description" content="How Surfaces Work — Lesson 01 · Materials. See why chrome, satin, clay, and car paint look different under the same light." />
+  <meta name="description" content="How Soft Surfaces Shimmer — Lesson 03 · Materials. Sheen, iridescence, and soft transmission for fabric, thin films, and wax." />
+  <title>How Soft Surfaces Shimmer · Lesson 03 · Materials</title>
+  <meta property="og:title" content="How Soft Surfaces Shimmer · Lesson 03 · Materials" />
+  <meta property="og:description" content="Lesson 03 · Materials. See why velvet edges glow, soap films shift color, and wax lets light in." />
   <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
       --ink: #050505;
       --paper: #f4efe6;
-      --cream: #e8dfd0;
+      --cream: #ebe0d0;
+      --warm: #e8a878;
       --mute: rgba(244, 239, 230, 0.58);
       --dim: rgba(244, 239, 230, 0.28);
-      --accent: #ff5a1f;
-      --accent2: #c8f542;
-      --steel: #7ec8ff;
+      --accent: #b388ff;
+      --accent2: #5ce1e6;
+      --steel: #9ad4ff;
       --line: rgba(244, 239, 230, 0.14);
-      --card: #101010;
-      --placard: #0e0e0e;
+      --card: #12100e;
+      --placard: #100e0c;
       --mono: "JetBrains Mono", ui-monospace, monospace;
       --display: "Space Grotesk", sans-serif;
       --body: "Gabarito", sans-serif;
@@ -42,7 +43,6 @@
       line-height: 1.5;
       overflow-x: hidden;
     }
-    /* One shared full-page WebGL canvas (multiple-elements pattern) */
     #c {
       position: fixed;
       inset: 0;
@@ -63,7 +63,6 @@
       pointer-events: auto;
     }
 
-    /* —— Hero —— */
     .hero {
       min-height: 92vh;
       padding: clamp(1.25rem, 4vw, 3rem);
@@ -84,11 +83,11 @@
     .hero h1 {
       font-family: var(--display);
       font-weight: 500;
-      font-size: clamp(3.4rem, 11.5vw, 7.6rem);
+      font-size: clamp(3.2rem, 10.5vw, 6.8rem);
       line-height: 0.9;
       letter-spacing: -0.045em;
       margin: 0 0 1.25rem;
-      max-width: 11ch;
+      max-width: 12ch;
     }
     .hero h1 em {
       font-style: normal;
@@ -96,7 +95,7 @@
     }
     .hero-sub {
       font-size: clamp(1.05rem, 2.2vw, 1.35rem);
-      max-width: 34ch;
+      max-width: 36ch;
       color: var(--mute);
       margin: 0 0 1.75rem;
       font-weight: 500;
@@ -122,7 +121,7 @@
     }
     .hero-diagram {
       border: 1px solid var(--line);
-      background: linear-gradient(160deg, #1c1712 0%, #0e0c0a 100%);
+      background: linear-gradient(160deg, #16121c 0%, #0c0a10 100%);
       padding: 1.1rem 1.2rem;
       position: relative;
       overflow: hidden;
@@ -134,7 +133,7 @@
       right: -20%;
       width: 70%;
       height: 90%;
-      background: radial-gradient(circle, rgba(255,90,31,0.22), transparent 65%);
+      background: radial-gradient(circle, rgba(179,136,255,0.28), transparent 65%);
       pointer-events: none;
     }
     .hero-diagram h2 {
@@ -178,7 +177,6 @@
     }
     .scroll-cue a { color: var(--paper); text-decoration: none; border-bottom: 1px solid var(--accent); }
 
-    /* —— Specimens —— */
     .specimen {
       scroll-margin-top: 8px;
       display: grid;
@@ -206,7 +204,7 @@
     }
     .centerpiece .views {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
       min-height: 58vh;
       border-bottom: 1px solid var(--line);
     }
@@ -264,18 +262,12 @@
       line-height: 1.05;
       margin: 0;
     }
-    .lesson {
-      font-size: 14.5px;
-      color: var(--cream);
-      margin: 0;
-    }
-    .lesson p {
-      margin: 0 0 0.55rem;
-    }
+    .lesson { font-size: 14.5px; color: var(--cream); margin: 0; }
+    .lesson p { margin: 0 0 0.55rem; }
     .lesson p:last-child { margin-bottom: 0; }
     .try {
-      border: 1px dashed rgba(200, 245, 66, 0.45);
-      background: rgba(200, 245, 66, 0.06);
+      border: 1px dashed rgba(232, 168, 120, 0.45);
+      background: linear-gradient(135deg, rgba(232,168,120,0.08), rgba(179,136,255,0.06));
       padding: 0.85rem 1rem;
     }
     .try strong {
@@ -289,11 +281,7 @@
       font-weight: 700;
     }
     .try p { margin: 0; font-size: 14px; color: var(--paper); }
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.45rem;
-    }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
     .chip {
       font-family: var(--mono);
       font-size: 11px;
@@ -311,13 +299,10 @@
       border-color: var(--accent);
       color: #0c0a08;
     }
-    .ctrls {
-      display: grid;
-      gap: 0.65rem;
-    }
+    .ctrls { display: grid; gap: 0.65rem; }
     .ctrl {
       display: grid;
-      grid-template-columns: 6.5rem 1fr 2.6rem;
+      grid-template-columns: 7.2rem 1fr 2.8rem;
       gap: 0.55rem;
       align-items: center;
       font-family: var(--mono);
@@ -330,14 +315,15 @@
       width: 100%;
       accent-color: var(--accent);
       height: 1.4rem;
+      /* iPhone: enlarge hit area without changing visual track much */
+      touch-action: none;
     }
     .ctrl output { text-align: right; color: var(--paper); }
 
-    /* —— Teachers —— */
     .teachers {
       border-top: 1px solid var(--line);
       padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 4vw, 3rem);
-      background: #100e0b;
+      background: #100e12;
       display: grid;
       grid-template-columns: 0.9fr 1.1fr;
       gap: clamp(1.5rem, 4vw, 3rem);
@@ -350,15 +336,8 @@
       line-height: 1;
       margin: 0 0 0.75rem;
     }
-    .teachers .lede {
-      color: var(--mute);
-      max-width: 36ch;
-      margin: 0;
-    }
-    .teach-grid {
-      display: grid;
-      gap: 1rem;
-    }
+    .teachers .lede { color: var(--mute); max-width: 36ch; margin: 0; }
+    .teach-grid { display: grid; gap: 1rem; }
     .teach-card {
       border: 1px solid var(--line);
       padding: 1.1rem 1.2rem;
@@ -381,12 +360,45 @@
     }
     .teach-card li { margin-bottom: 0.35rem; }
     .teach-card p { margin: 0; font-size: 14.5px; color: var(--cream); }
-    .map-cols {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-    }
+    .map-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
     .map-cols .teach-card { margin: 0; }
+
+    .glossary {
+      border-top: 1px solid var(--line);
+      padding: clamp(2rem, 4vw, 3rem) clamp(1.25rem, 4vw, 3rem);
+      background: #0a090c;
+    }
+    .glossary h2 {
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+      letter-spacing: -0.03em;
+      margin: 0 0 1.25rem;
+    }
+    .glossary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.85rem;
+    }
+    .glossary-item {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 1rem 1.1rem;
+      background: var(--card);
+    }
+    .glossary-item dt {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 0.4rem;
+    }
+    .glossary-item dd {
+      margin: 0;
+      font-size: 14px;
+      color: var(--cream);
+    }
 
     footer {
       border-top: 1px solid var(--line);
@@ -403,11 +415,6 @@
     }
     footer a { color: var(--paper); text-decoration: none; border-bottom: 1px solid var(--accent); }
     .series-nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.45rem;
-      justify-content: flex-end;
-      max-width: min(92vw, 420px);
       position: absolute;
       top: clamp(1rem, 3vw, 1.75rem);
       right: clamp(1rem, 3vw, 2rem);
@@ -416,6 +423,11 @@
       font-size: 11px;
       letter-spacing: 0.14em;
       text-transform: uppercase;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      justify-content: flex-end;
+      max-width: min(92vw, 420px);
     }
     .series-nav a {
       color: var(--paper);
@@ -457,7 +469,6 @@
       .specimen { min-height: auto; }
     }
 
-    /* Series craft — Ruben-energy principles (not a copy) */
     body::before {
       content: "";
       position: fixed;
@@ -485,17 +496,10 @@
       letter-spacing: 0.08em !important;
       transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
     }
-    .chip:hover {
-      transform: translateY(-1px);
-      border-color: var(--accent);
-    }
+    .chip:hover { transform: translateY(-1px); border-color: var(--accent); }
     .chip:active { transform: translateY(0); }
-    .try {
-      border-radius: 14px;
-    }
-    .hero-diagram {
-      border-radius: 16px;
-    }
+    .try { border-radius: 14px; }
+    .hero-diagram { border-radius: 16px; }
     .teach-card {
       border-radius: 14px;
       transition: border-color 0.2s ease, transform 0.2s ease;
@@ -516,16 +520,30 @@
       color: #0a0a0a;
       border-color: var(--accent);
     }
-    .view-label {
-      border-radius: 999px;
+    .view-label { border-radius: 999px; }
+    .ctrl input[type="range"] { height: 1.25rem; }
+    /* iPhone / coarse pointer: ≥44px tall touch target (Apple HIG) */
+    @media (pointer: coarse), (hover: none) {
+      .ctrl {
+        grid-template-columns: 7.2rem 1fr 2.8rem;
+        min-height: 44px;
+      }
+      .ctrl input[type="range"] {
+        height: 44px;
+        min-height: 44px;
+        margin: 0;
+        padding: 0;
+      }
     }
-    .ctrl input[type="range"] {
-      height: 1.25rem;
+    @media (max-width: 700px) {
+      .ctrl input[type="range"] {
+        height: 44px;
+        min-height: 44px;
+      }
     }
     @media (prefers-reduced-motion: reduce) {
       .chip, .teach-card, .series-nav a { transition: none !important; }
     }
-
 
     .ticker {
       position: relative;
@@ -592,7 +610,6 @@
       touch-action: pan-y;
       cursor: crosshair;
     }
-    /* Glossary: a normal block in the flow, never over the hero */
     .hero-gloss {
       grid-column: 1 / -1;
       position: relative;
@@ -607,7 +624,10 @@
       right: auto !important;
       display: flex;
       justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 0.45rem;
       padding: 0.9rem clamp(1.25rem, 4vw, 3rem) 0;
+      max-width: none;
     }
     @media (max-width: 860px) {
       .hero { grid-template-columns: 1fr !important; padding-top: 0.75rem; }
@@ -635,179 +655,200 @@
   <canvas id="c"></canvas>
   <div class="err" id="err"></div>
 
-
   <div class="ticker" aria-hidden="true">
     <div class="ticker-track">
-      
-      <span>DIFFUSE</span><span>SPECULAR</span><span>FRESNEL</span><span>ROUGHNESS</span>
-      <span>METALNESS</span><span>CLEARCOAT</span><span>ANISOTROPY</span><span>MATCAP</span>
-      <span>PBR</span><span>ALBEDO</span><span>NORMAL</span><span>IOR</span>
-
-      
-      <span>DIFFUSE</span><span>SPECULAR</span><span>FRESNEL</span><span>ROUGHNESS</span>
-      <span>METALNESS</span><span>CLEARCOAT</span><span>ANISOTROPY</span><span>MATCAP</span>
-      <span>PBR</span><span>ALBEDO</span><span>NORMAL</span><span>IOR</span>
-
+      <span>SHEEN</span><span>VELVET</span><span>IRIDESCENCE</span><span>THIN FILM</span>
+      <span>TRANSMISSION</span><span>ATTENUATION</span><span>WAX</span><span>JADE</span>
+      <span>GRAZING</span><span>FIBERS</span><span>SCATTER</span><span>VIEW ANGLE</span>
+      <span>SHEEN</span><span>VELVET</span><span>IRIDESCENCE</span><span>THIN FILM</span>
+      <span>TRANSMISSION</span><span>ATTENUATION</span><span>WAX</span><span>JADE</span>
+      <span>GRAZING</span><span>FIBERS</span><span>SCATTER</span><span>VIEW ANGLE</span>
     </div>
   </div>
   <div class="content">
-    <nav class="series-nav"><a href="https://how-textures-work-production.up.railway.app/">Series · Textures</a> <a href="/sheen/">Lesson 03 · Soft</a></nav>
+    <nav class="series-nav">
+      <a href="/">Lesson 01 · Surfaces</a>
+      <a href="https://how-textures-work-production.up.railway.app/">Lesson 02 · Textures</a>
+    </nav>
     <header class="hero" id="top">
       <div class="hero-copy">
-        <p class="hero-kicker">Lesson 01 · Materials</p>
-        <h1>How <em>Surfaces</em> Work</h1>
-        <p class="hero-sub">A materials lab for art, design, and intro materials science. Same shape. Different light rules.</p>
+        <p class="hero-kicker">Lesson 03 · Materials</p>
+        <h1>How Soft Surfaces <em>Shimmer</em></h1>
+        <p class="hero-sub">Velvet edges. Soap-film color. Soft light inside wax. Three finishes that change with the angle you look.</p>
         <div class="hero-meta">
           <div>Time <span>20 min</span></div>
-          <div>You will learn <span>why chrome and satin look different</span></div>
-          <div>Try first <span>drag across the big chrome knot to see the real material</span></div>
-          <div>Core lesson <span>MatCap fakes · PBR computes</span></div>
+          <div>You will learn <span>sheen, iridescence, soft transmission</span></div>
+          <div>Try first <span>drag the velvet knot to lift the shimmer lens</span></div>
+          <div>Core lesson <span>Angle decides the glow</span></div>
         </div>
         <p class="scroll-cue"><a href="#s01">Enter the lab ↓</a></p>
       </div>
       <div class="hero-stage">
-        <div class="view" data-scene="hero" tabindex="0" aria-label="Large chrome knot. Drag across it to see the real material under the dot pattern."></div>
+        <div class="view" data-scene="hero" tabindex="0" aria-label="Large velvet knot. Drag to move the shimmer lens and see the real material."></div>
       </div>
       <div class="hero-diagram hero-gloss" aria-label="Lesson map">
           <h2>What you will see</h2>
           <div class="diagram-rows">
-            <div><b>Diffuse</b><span>Light scatters. Soft. No sharp mirror.</span></div>
-            <div><b>Specular</b><span>Mirror lobe. Highlight shape = finish.</span></div>
-            <div><b>Roughness</b><span>Micro-facets spread the highlight.</span></div>
-            <div><b>Metalness</b><span>Metals tint reflections. Dielectrics keep white Fresnel.</span></div>
-            <div><b>Clearcoat</b><span>Extra glossy layer over paint or lacquer.</span></div>
-            <div><b>Anisotropy</b><span>Brushed grooves stretch the highlight.</span></div>
+            <div><b>Sheen</b><span>Tiny fibers catch light at the rim.</span></div>
+            <div><b>Iridescence</b><span>A thin layer shifts color with angle.</span></div>
+            <div><b>Transmission</b><span>Light enters, scatters, and tints.</span></div>
+            <div><b>Thickness</b><span>More path inside means more tint.</span></div>
+            <div><b>Attenuation</b><span>Color builds as light travels in.</span></div>
+            <div><b>View angle</b><span>Both sheen and film color need a tilt.</span></div>
           </div>
         </div>
     </header>
 
-    <!-- SPECIMEN 01 MatCap -->
     <section class="specimen" id="s01">
       <div class="view-wrap">
-        <div class="view" data-scene="matcap" tabindex="0" aria-label="MatCap specimen: 3D view. Drag to turn."></div>
+        <div class="view" data-scene="sheen" tabindex="0" aria-label="Sheen specimen: draped cushion. Drag to turn."></div>
       </div>
       <aside class="placard">
-        <p class="specimen-num">Specimen 01 — MatCap</p>
-        <h2 class="specimen-title">Baked lighting in one image</h2>
+        <p class="specimen-num">Specimen 01 — Sheen</p>
+        <h2 class="specimen-title">Fibers that glow at the rim</h2>
         <div class="lesson">
-          <p>A MatCap stores lighting in a circle image.</p>
-          <p>The shader looks up color from the surface direction.</p>
-          <p>It is cheap. It does not use real lights.</p>
-          <p>Move the light and the look stays the same.</p>
+          <p>Fabric has tiny fibers that stick up from the weave.</p>
+          <p>At grazing angles those fibers catch and bounce light.</p>
+          <p>The rim glows. The front face stays soft and dark.</p>
+          <p>Sheen is that soft colored glow, not a hard mirror.</p>
         </div>
         <div class="try">
           <strong>Try this</strong>
-          <p>Switch Chrome → Satin → Clay. Drag to orbit. Notice the “light” sticks to the view, not to the room.</p>
+          <p>Drag the cushion — it has weight. Then raise sheen and watch the rim glow. Soften with sheen roughness.</p>
         </div>
-        <div class="chips" role="group" aria-label="MatCap presets">
-          <button type="button" class="chip" data-matcap="chrome" aria-pressed="true">Chrome</button>
-          <button type="button" class="chip" data-matcap="satin" aria-pressed="false">Satin</button>
-          <button type="button" class="chip" data-matcap="clay" aria-pressed="false">Clay</button>
+        <div class="chips" role="group" aria-label="Sheen presets">
+          <button type="button" class="chip" data-sheen="velvet" aria-pressed="true">Velvet</button>
+          <button type="button" class="chip" data-sheen="satin" aria-pressed="false">Satin cloth</button>
+          <button type="button" class="chip" data-sheen="wool" aria-pressed="false">Wool</button>
+        </div>
+        <div class="ctrls">
+          <label class="ctrl">Sheen
+            <input id="sheen-amt" type="range" min="0" max="1" step="0.01" value="1" />
+            <output id="sheen-amt-out" for="sheen-amt">1.00</output>
+          </label>
+          <label class="ctrl">Sheen rough
+            <input id="sheen-rough" type="range" min="0" max="1" step="0.01" value="0.35" />
+            <output id="sheen-rough-out" for="sheen-rough">0.35</output>
+          </label>
         </div>
       </aside>
     </section>
 
-    <!-- SPECIMEN 02 PBR -->
     <section class="specimen" id="s02">
       <div class="view-wrap">
-        <div class="view" data-scene="pbr" tabindex="0" aria-label="PBR specimen: 3D view. Drag to turn."></div>
+        <div class="view" data-scene="iridescence" tabindex="0" aria-label="Iridescence specimen: thin-film sphere. Drag to turn."></div>
       </div>
       <aside class="placard">
-        <p class="specimen-num">Specimen 02 — PBR Standard</p>
-        <h2 class="specimen-title">Computed light · room reflections</h2>
+        <p class="specimen-num">Specimen 02 — Iridescence</p>
+        <h2 class="specimen-title">Color that shifts with tilt</h2>
         <div class="lesson">
-          <p>PBR estimates how micro-surfaces bounce light.</p>
-          <p>Roughness spreads the highlight.</p>
-          <p>Metalness switches metal vs dielectric rules.</p>
-          <p>The reflections come from a simple virtual room around the object.</p>
+          <p>A very thin layer sits on the surface.</p>
+          <p>Light waves bounce from the top and the bottom of that layer.</p>
+          <p>The waves overlap. Some colors get stronger. Some cancel.</p>
+          <p>Change the viewing angle and the color shifts.</p>
         </div>
         <div class="try">
           <strong>Try this</strong>
-          <p>Drag roughness from 0 to 1. Watch the highlight spread. Then flip metalness and watch reflections tint.</p>
+          <p>Orbit slowly. Watch cyan, magenta, and gold chase each other. Switch presets — each dissolves into the next.</p>
         </div>
-        <div class="chips" role="group" aria-label="PBR presets">
-          <button type="button" class="chip" data-pbr="chrome" aria-pressed="true">Polished chrome</button>
-          <button type="button" class="chip" data-pbr="satin" aria-pressed="false">Satin metal</button>
-          <button type="button" class="chip" data-pbr="plastic" aria-pressed="false">Colored plastic</button>
+        <div class="chips" role="group" aria-label="Iridescence presets">
+          <button type="button" class="chip" data-iri="bubble" aria-pressed="true">Soap bubble</button>
+          <button type="button" class="chip" data-iri="oil" aria-pressed="false">Oil slick</button>
+          <button type="button" class="chip" data-iri="beetle" aria-pressed="false">Beetle shell</button>
         </div>
         <div class="ctrls">
-          <label class="ctrl">Roughness
-            <input id="pbr-rough" type="range" min="0" max="1" step="0.01" value="0.05" />
-            <output id="pbr-rough-out" for="pbr-rough">0.05</output>
+          <label class="ctrl">Iridescence
+            <input id="iri-amt" type="range" min="0" max="1" step="0.01" value="1" />
+            <output id="iri-amt-out" for="iri-amt">1.00</output>
           </label>
-          <label class="ctrl">Metalness
-            <input id="pbr-metal" type="range" min="0" max="1" step="0.01" value="1" />
-            <output id="pbr-metal-out" for="pbr-metal">1.00</output>
+          <label class="ctrl">Film IOR
+            <input id="iri-ior" type="range" min="1" max="2.5" step="0.01" value="1.6" />
+            <output id="iri-ior-out" for="iri-ior">1.60</output>
+          </label>
+          <label class="ctrl">Thickness
+            <input id="iri-thick" type="range" min="100" max="800" step="10" value="400" />
+            <output id="iri-thick-out" for="iri-thick">400</output>
           </label>
         </div>
       </aside>
     </section>
 
-    <!-- SPECIMEN 03 Physical -->
     <section class="specimen" id="s03">
       <div class="view-wrap">
-        <div class="view" data-scene="physical" tabindex="0" aria-label="Physical material specimen: 3D view. Drag to turn."></div>
+        <div class="view" data-scene="wax" tabindex="0" aria-label="Transmission specimen: wax and jade. Drag to turn."></div>
       </div>
       <aside class="placard">
-        <p class="specimen-num">Specimen 03 — Physical</p>
-        <h2 class="specimen-title">Clearcoat · brushed metal</h2>
+        <p class="specimen-num">Specimen 03 — Soft transmission</p>
+        <h2 class="specimen-title">Light that enters and tints</h2>
         <div class="lesson">
-          <p>Clearcoat adds a thin glossy layer over the base paint.</p>
-          <p>Car paint and lacquer use this idea.</p>
-          <p>Anisotropy stretches the specular along brush grooves.</p>
-          <p>Same knot. Two finishes side by side in one view.</p>
+          <p>Wax, jade, and milky plastic are not clear glass.</p>
+          <p>Light enters the solid. It scatters inside.</p>
+          <p>As it travels, the color builds up.</p>
+          <p>Thickness and attenuation set how deep and how tinted the glow looks.</p>
         </div>
         <div class="try">
           <strong>Try this</strong>
-          <p>Orbit the car-paint knot. Then raise clearcoat. Watch a second, sharper gloss sit on top of the color.</p>
+          <p>Raise transmission a little. Then raise thickness. Watch the core warm up. Keep it milky — not clear.</p>
         </div>
-        <div class="chips" role="group" aria-label="Physical focus">
-          <button type="button" class="chip" data-phys="paint" aria-pressed="true">Car paint</button>
-          <button type="button" class="chip" data-phys="brush" aria-pressed="false">Brushed metal</button>
+        <div class="chips" role="group" aria-label="Transmission presets">
+          <button type="button" class="chip" data-wax="candle" aria-pressed="true">Candle wax</button>
+          <button type="button" class="chip" data-wax="jade" aria-pressed="false">Jade</button>
+          <button type="button" class="chip" data-wax="milk" aria-pressed="false">Milky plastic</button>
         </div>
         <div class="ctrls">
-          <label class="ctrl">Clearcoat
-            <input id="phys-coat" type="range" min="0" max="1" step="0.01" value="1" />
-            <output id="phys-coat-out" for="phys-coat">1.00</output>
+          <label class="ctrl">Transmit
+            <input id="wax-tx" type="range" min="0" max="1" step="0.01" value="0.65" />
+            <output id="wax-tx-out" for="wax-tx">0.65</output>
           </label>
-          <label class="ctrl">Anisotropy
-            <input id="phys-aniso" type="range" min="0" max="1" step="0.01" value="0.85" />
-            <output id="phys-aniso-out" for="phys-aniso">0.85</output>
+          <label class="ctrl">Thickness
+            <input id="wax-thick" type="range" min="0.1" max="4" step="0.05" value="1.5" />
+            <output id="wax-thick-out" for="wax-thick">1.50</output>
+          </label>
+          <label class="ctrl">Atten dist
+            <input id="wax-atten" type="range" min="0.1" max="4" step="0.05" value="0.8" />
+            <output id="wax-atten-out" for="wax-atten">0.80</output>
           </label>
         </div>
       </aside>
     </section>
 
-    <!-- CENTERPIECE -->
     <section class="specimen centerpiece" id="s04">
       <div class="views">
         <div class="view-pane">
-          <div class="view-label">MatCap · baked</div>
-          <div class="view" data-scene="compare-matcap" tabindex="0" aria-label="MatCap side of comparison"></div>
+          <div class="view-label">Sheen · velvet</div>
+          <div class="view" data-scene="cmp-sheen" tabindex="0" aria-label="Sheen side of comparison"></div>
         </div>
         <div class="view-pane">
-          <div class="view-label">PBR · computed</div>
-          <div class="view" data-scene="compare-pbr" tabindex="0" aria-label="PBR side of comparison"></div>
+          <div class="view-label">Iridescence · film</div>
+          <div class="view" data-scene="cmp-iri" tabindex="0" aria-label="Iridescence side of comparison"></div>
+        </div>
+        <div class="view-pane">
+          <div class="view-label">Satin · plain</div>
+          <div class="view" data-scene="cmp-satin" tabindex="0" aria-label="Plain satin side of comparison"></div>
         </div>
       </div>
       <aside class="placard">
         <div>
           <p class="specimen-num">Specimen 04 — Centerpiece</p>
-          <h2 class="specimen-title">Same object. Two lighting contrasts.</h2>
+          <h2 class="specimen-title">Same tilt. Three answers.</h2>
           <div class="lesson">
-            <p>Left: MatCap. Lighting is baked into the texture.</p>
-            <p>Right: PBR. Lighting is computed from the environment.</p>
-            <p>A key light orbits both scenes.</p>
-            <p>MatCap ignores the orbit. PBR tracks it.</p>
+            <p>Left: velvet sheen. The rim glows.</p>
+            <p>Middle: thin-film color. The hue shifts.</p>
+            <p>Right: plain satin. Soft highlight only.</p>
+            <p>Both special effects need viewing angle. Satin does not shift color.</p>
           </div>
         </div>
         <div>
           <div class="try">
             <strong>Try this</strong>
-            <p>Watch for 10 seconds without touching. Then orbit one side. Ask: which finish would survive a real product shoot under moving lights?</p>
+            <p>Drag the angle slider. Watch which panel changes most. Ask: which finish would still read if the camera stayed fixed?</p>
           </div>
           <div class="ctrls" style="margin-top:1rem">
-            <label class="ctrl">Orbit light
+            <label class="ctrl">View angle
+              <input id="cmp-angle" type="range" min="0" max="1" step="0.01" value="0.35" />
+              <output id="cmp-angle-out" for="cmp-angle">0.35</output>
+            </label>
+            <label class="ctrl">Auto orbit
               <input id="cmp-orbit" type="range" min="0" max="1" step="1" value="1" />
               <output id="cmp-orbit-out" for="cmp-orbit">ON</output>
             </label>
@@ -819,37 +860,51 @@
     <section class="teachers" id="teachers">
       <div>
         <h2>For teachers</h2>
-        <p class="lede">Short objectives, one classroom loop, and how the lab maps to studio practice and materials science.</p>
+        <p class="lede">Short objectives, one classroom loop, and how soft finishes map to studio practice and materials science.</p>
       </div>
       <div class="teach-grid">
         <div class="teach-card">
           <h3>Learning objectives</h3>
           <ul>
-            <li>Name diffuse vs specular reflection on a real object.</li>
-            <li>Predict how roughness changes highlight size.</li>
-            <li>Explain why metals tint reflections and plastics do not.</li>
-            <li>Contrast MatCap (baked lookup) with PBR (computed lighting).</li>
+            <li>Describe sheen as fiber glow at grazing angles.</li>
+            <li>Predict that thin-film color changes with tilt.</li>
+            <li>Contrast soft transmission (wax) with clear glass.</li>
+            <li>Explain why view angle matters for sheen and iridescence.</li>
           </ul>
         </div>
         <div class="teach-card">
           <h3>10-minute classroom activity</h3>
-          <p>1) Hold a phone, a matte eraser, and a metal spoon under one desk lamp. 2) Students sketch highlight shape on each. 3) Open Specimen 02 and match roughness/metalness. 4) Finish on Specimen 04: write one sentence on why MatCap fails under a moving light.</p>
+          <p>1) Tilt a soap bubble, a CD, or a scrap of velvet under one desk lamp. 2) Students note where the glow or color appears. 3) Open Specimen 01 and match the velvet rim. 4) Open Specimen 02 and match the bubble shift. 5) Finish on Specimen 04: write one sentence on which effect needs angle most.</p>
         </div>
         <div class="map-cols">
           <div class="teach-card">
             <h3>Art &amp; design map</h3>
-            <p>Rendering look-dev, product design finishes, sculpture patina vs polish, concept art material callouts.</p>
+            <p>Fashion velvet and satin, product finishes, cosmetics packaging, jewelry film coatings, concept art callouts for soft materials.</p>
           </div>
           <div class="teach-card">
             <h3>Materials science map</h3>
-            <p>Surface roughness (Ra intuition), metals vs dielectrics, multilayer coatings (clearcoat ≈ lacquer), anisotropic machining marks.</p>
+            <p>Thin-film interference, light scattering in translucent solids, fiber optics of fabric nap, attenuation through thickness.</p>
           </div>
         </div>
       </div>
     </section>
 
+    <section class="glossary" id="glossary">
+      <h2>Glossary</h2>
+      <dl class="glossary-grid">
+        <div class="glossary-item"><dt>Sheen</dt><dd>Soft colored glow at the rim of a fabric, from tiny fibers catching light.</dd></div>
+        <div class="glossary-item"><dt>Sheen roughness</dt><dd>How soft or sharp that fiber glow looks.</dd></div>
+        <div class="glossary-item"><dt>Iridescence</dt><dd>Color that shifts with viewing angle because of a very thin surface layer.</dd></div>
+        <div class="glossary-item"><dt>Film IOR</dt><dd>How strongly the thin layer bends light. It changes which colors win.</dd></div>
+        <div class="glossary-item"><dt>Film thickness</dt><dd>How deep the thin layer is. It sets the interference colors.</dd></div>
+        <div class="glossary-item"><dt>Transmission</dt><dd>How much light enters the solid instead of bouncing off the surface.</dd></div>
+        <div class="glossary-item"><dt>Attenuation</dt><dd>How fast light loses energy and picks up tint as it travels inside.</dd></div>
+        <div class="glossary-item"><dt>Grazing angle</dt><dd>A view almost along the surface. Edges and films show most here.</dd></div>
+      </dl>
+    </section>
+
     <footer>
-      <div>How Surfaces Work · Lesson 01 · Materials · <a href="https://how-textures-work-production.up.railway.app/">Series · Textures</a> · <a href="/sheen/">Lesson 03 · Soft</a></div>
+      <div>How Soft Surfaces Shimmer · Lesson 03 · Materials · <a href="/">Lesson 01</a> · <a href="https://how-textures-work-production.up.railway.app/">Lesson 02</a></div>
       <div><a href="#top">Back to top</a></div>
     </footer>
   </div>
