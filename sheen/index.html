@@ -315,6 +315,8 @@
       width: 100%;
       accent-color: var(--accent);
       height: 1.4rem;
+      /* iPhone: enlarge hit area without changing visual track much */
+      touch-action: none;
     }
     .ctrl output { text-align: right; color: var(--paper); }
 
@@ -520,6 +522,25 @@
     }
     .view-label { border-radius: 999px; }
     .ctrl input[type="range"] { height: 1.25rem; }
+    /* iPhone / coarse pointer: ≥44px tall touch target (Apple HIG) */
+    @media (pointer: coarse), (hover: none) {
+      .ctrl {
+        grid-template-columns: 7.2rem 1fr 2.8rem;
+        min-height: 44px;
+      }
+      .ctrl input[type="range"] {
+        height: 44px;
+        min-height: 44px;
+        margin: 0;
+        padding: 0;
+      }
+    }
+    @media (max-width: 700px) {
+      .ctrl input[type="range"] {
+        height: 44px;
+        min-height: 44px;
+      }
+    }
     @media (prefers-reduced-motion: reduce) {
       .chip, .teach-card, .series-nav a { transition: none !important; }
     }
