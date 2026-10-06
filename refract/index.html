@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="How Glass Bends What You See — Lesson 07 · Materials. Refraction, index of refraction, thickness, and why a prism shows a spectrum." />
+  <title>How Glass Bends What You See · Lesson 07 · Materials</title>
+  <meta property="og:title" content="How Glass Bends What You See · Lesson 07 · Materials" />
+  <meta property="og:description" content="Lesson 07 · Materials. See how water, glass, and diamond bend the light that goes through." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="How Glass Bends What You See · Lesson 07 · Materials" />
+  <meta name="twitter:description" content="Lesson 07 · Materials. See how water, glass, and diamond bend the light that goes through." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #040a0c;
+      --paper: #e8fffb;
+      --cream: #c8f5ee;
+      --mute: rgba(232, 255, 251, 0.58);
+      --dim: rgba(232, 255, 251, 0.28);
+      --accent: #2ee6d6;
+      --accent2: #9af5ea;
+      --steel: #6ed4c8;
+      --line: rgba(232, 255, 251, 0.14);
+      --card: #0a1214;
+      --placard: #081012;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --display: "Space Grotesk", sans-serif;
+      --body: "Gabarito", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    body {
+      margin: 0; background: var(--ink); color: var(--paper);
+      font-family: var(--body); font-size: 16px; line-height: 1.5; overflow-x: hidden;
+    }
+    #c { position: fixed; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; pointer-events: none; }
+    .content { position: relative; z-index: 1; }
+    .content .view, .content .chip, .content .ctrl { pointer-events: auto; }
+    .ticker {
+      position: relative; z-index: 6; overflow: hidden; border-bottom: 1px solid var(--line);
+      background: #000; height: 28px; display: flex; align-items: center; pointer-events: none;
+    }
+    .ticker-track { display: flex; gap: 1.5rem; white-space: nowrap; animation: tick 48s linear infinite; padding-left: 1rem; }
+    .ticker-track span { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent2); }
+    @keyframes tick { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
+    .series-nav {
+      display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: flex-end;
+      max-width: min(96vw, 720px); position: absolute; top: clamp(1rem, 3vw, 1.75rem);
+      right: clamp(1rem, 3vw, 2rem); z-index: 5; font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.14em; text-transform: uppercase;
+    }
+    .series-nav a {
+      color: var(--paper); text-decoration: none; border: 1px solid var(--line);
+      border-bottom: 1px solid var(--accent); border-radius: 999px; padding: 0.45rem 0.85rem;
+      transition: background 0.18s ease, color 0.18s ease;
+    }
+    .series-nav a:hover { background: var(--accent); color: #041018; border-color: var(--accent); }
+    .hero {
+      display: grid; grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.25fr);
+      gap: 0; min-height: 88vh; padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 4vw, 3rem) 2rem;
+      position: relative;
+    }
+    .hero-copy { display: flex; flex-direction: column; justify-content: center; padding-right: clamp(1rem, 3vw, 2rem); }
+    .hero-kicker { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent2); margin: 0 0 1rem; }
+    .hero h1 {
+      font-family: var(--display); font-weight: 500; font-size: clamp(2.6rem, 7vw, 4.6rem);
+      letter-spacing: -0.045em; line-height: 0.95; margin: 0 0 1rem; max-width: 14ch;
+    }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero-lede { color: var(--mute); max-width: 36ch; margin: 0 0 1.25rem; font-size: 1.05rem; }
+    .hero-meta {
+      display: grid; gap: 0.35rem; font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); margin-bottom: 1.5rem;
+    }
+    .hero-meta b { color: var(--steel); font-weight: 500; }
+    .scroll-cue { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin-top: 1.5rem; }
+    .scroll-cue a { color: var(--paper); text-decoration: none; border-bottom: 1px solid var(--accent); }
+    .hero-stage { position: relative; min-height: 52vh; }
+    .hero-stage .view[data-scene="hero"] { width: 100%; height: 100%; min-height: 52vh; touch-action: none; }
+    .hero-gloss {
+      grid-column: 1 / -1; border-top: 1px solid var(--line); margin-top: 1.5rem; padding-top: 1.25rem;
+    }
+    .hero-gloss h2 {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+      margin: 0 0 0.85rem; color: var(--accent);
+    }
+    .diagram-rows { display: grid; gap: 0.55rem; font-size: 13px; color: var(--cream); }
+    .diagram-rows div {
+      display: grid; grid-template-columns: 7.5rem 1fr; gap: 0.6rem; align-items: baseline;
+      border-bottom: 1px solid var(--line); padding-bottom: 0.45rem;
+    }
+    .diagram-rows b {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--steel); font-weight: 400;
+    }
+    .specimen {
+      scroll-margin-top: 8px; display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.85fr);
+      gap: 0; min-height: 78vh; border-top: 1px solid var(--line); position: relative;
+    }
+    .view-wrap { position: relative; min-height: 52vh; background: transparent; }
+    .view { width: 100%; height: 100%; min-height: 52vh; position: relative; touch-action: none; }
+    .view-label {
+      position: absolute; top: 14px; left: 14px; z-index: 3; font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; padding: 6px 10px;
+      background: rgba(4, 12, 14, 0.72); border: 1px solid var(--line); color: var(--accent2); border-radius: 999px;
+    }
+    .placard {
+      background: var(--placard); border-left: 1px solid var(--line); padding: clamp(1.25rem, 3vw, 2rem);
+      display: flex; flex-direction: column; justify-content: space-between; gap: 1.25rem;
+    }
+    .specimen-num { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin: 0 0 0.5rem; }
+    .specimen-title {
+      font-family: var(--display); font-weight: 500; font-size: clamp(1.6rem, 3.5vw, 2.3rem);
+      letter-spacing: -0.03em; line-height: 1.1; margin: 0 0 0.75rem;
+    }
+    .lesson { color: var(--cream); font-size: 15px; }
+    .lesson p { margin: 0 0 0.65rem; }
+    .try {
+      border: 1px solid var(--line); padding: 0.9rem 1rem; background: var(--card);
+      font-size: 14.5px; color: var(--cream);
+    }
+    .try strong {
+      display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--accent2); margin-bottom: 0.4rem; font-weight: 500;
+    }
+    .ctrls { display: grid; gap: 0.65rem; }
+    .ctrl {
+      display: grid; grid-template-columns: 7.2rem 1fr 2.8rem; gap: 0.55rem; align-items: center;
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--mute);
+    }
+    .ctrl input[type="range"] {
+      width: 100%; accent-color: var(--accent); height: 1.4rem; touch-action: none;
+    }
+    .ctrl output { text-align: right; color: var(--paper); }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+    .chip {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+      border: 1px solid var(--line); background: transparent; color: var(--paper); padding: 0.45rem 0.7rem;
+      border-radius: 999px; cursor: pointer;
+    }
+    .chip[aria-pressed="true"] { background: var(--accent); color: #041018; border-color: var(--accent); }
+    .ior-readout {
+      font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent); margin: 0.15rem 0 0.35rem;
+    }
+    .real-world {
+      border-top: 1px solid var(--line); padding: clamp(2.25rem, 5.5vw, 4.5rem) clamp(1.25rem, 4vw, 3rem);
+      background: #061014; display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: clamp(1.75rem, 4vw, 3.5rem); align-items: start;
+    }
+    .real-world h2 {
+      font-family: var(--display); font-weight: 500; font-size: clamp(2.1rem, 5.2vw, 3.5rem);
+      letter-spacing: -0.04em; line-height: 1; margin: 0 0 0.85rem; max-width: 12ch;
+    }
+    .real-world .lede { color: var(--mute); max-width: 34ch; margin: 0; font-size: 15.5px; }
+    .real-world-kicker {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent); margin: 0 0 0.75rem;
+    }
+    .real-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+    .real-list > li {
+      display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); gap: 0.85rem 1rem;
+      padding: 1.15rem 0 1.25rem; border-top: 1px solid var(--line);
+    }
+    .real-list > li:last-child { border-bottom: 1px solid var(--line); }
+    .real-list .n { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--accent); padding-top: 0.2rem; }
+    .real-list h3 {
+      font-family: var(--display); font-weight: 500; font-size: clamp(1.15rem, 2.4vw, 1.45rem);
+      letter-spacing: -0.02em; line-height: 1.2; margin: 0 0 0.35rem; color: var(--paper);
+    }
+    .real-list .job {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--steel); margin: 0 0 0.55rem;
+    }
+    .real-list p { margin: 0; color: var(--cream); font-size: 15px; max-width: 58ch; }
+    .teachers {
+      border-top: 1px solid var(--line); padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 4vw, 3rem);
+      background: #081214; display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(1.5rem, 4vw, 3rem);
+    }
+    .teachers h2 {
+      font-family: var(--display); font-weight: 500; font-size: clamp(2.1rem, 5.2vw, 3.5rem);
+      letter-spacing: -0.04em; line-height: 1; margin: 0 0 0.75rem;
+    }
+    .teachers .lede { color: var(--mute); max-width: 36ch; margin: 0; }
+    .teach-grid { display: grid; gap: 1rem; }
+    .teach-card { border: 1px solid var(--line); padding: 1.1rem 1.2rem; background: var(--card); }
+    .teach-card h3 {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--steel); margin: 0 0 0.6rem; font-weight: 700;
+    }
+    .teach-card ul { margin: 0; padding-left: 1.1rem; color: var(--cream); font-size: 14.5px; }
+    .teach-card li { margin-bottom: 0.35rem; }
+    .teach-card p { margin: 0; font-size: 14.5px; color: var(--cream); }
+    footer {
+      border-top: 1px solid var(--line); padding: 1.25rem clamp(1.25rem, 4vw, 3rem) 2rem;
+      display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; justify-content: space-between;
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim);
+    }
+    footer a { color: var(--paper); text-decoration: none; border-bottom: 1px solid var(--accent); }
+    #err {
+      position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 20; background: #3a1212;
+      color: #ffd6d6; padding: 12px 14px; border-radius: 8px; display: none; white-space: pre-wrap;
+      font-family: var(--mono); font-size: 12px; pointer-events: none;
+    }
+    @media (pointer: coarse), (hover: none) {
+      .ctrl { min-height: 44px; }
+      .ctrl input[type="range"] { height: 44px; min-height: 44px; margin: 0; padding: 0; }
+    }
+    @media (max-width: 700px) {
+      .ctrl input[type="range"] { height: 44px; min-height: 44px; }
+    }
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 2rem; }
+      .specimen, .teachers, .real-world { grid-template-columns: 1fr; }
+      .placard { border-left: none; border-top: 1px solid var(--line); }
+      .view, .view-wrap { min-height: 42vh; }
+      .specimen { min-height: auto; }
+      .real-world { gap: 1.5rem; }
+      .real-list > li { grid-template-columns: 2rem minmax(0, 1fr); }
+      .series-nav { position: relative; top: auto; right: auto; max-width: none; justify-content: flex-start; padding: 0.75rem 1.25rem; }
+    }
+    @media (max-height: 480px) and (orientation: landscape) {
+      .hero { min-height: auto; padding-top: 1rem; padding-bottom: 0.75rem; }
+      .hero-lede, .hero-meta { display: none; }
+      .hero-stage, .hero-stage .view[data-scene="hero"] { min-height: 36vh; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .chip, .series-nav a { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div id="err" role="alert"></div>
+  <div class="content" id="top">
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track">
+        <span>REFRACTION</span><span>·</span><span>IOR</span><span>·</span><span>SNELL</span><span>·</span>
+        <span>TRANSMISSION</span><span>·</span><span>LENS</span><span>·</span><span>PRISM</span><span>·</span>
+        <span>DISPERSION</span><span>·</span><span>DIAMOND</span><span>·</span><span>WATER</span><span>·</span>
+        <span>GLASS</span><span>·</span><span>TIR</span><span>·</span>
+        <span>REFRACTION</span><span>·</span><span>IOR</span><span>·</span><span>SNELL</span><span>·</span>
+        <span>TRANSMISSION</span><span>·</span><span>LENS</span><span>·</span><span>PRISM</span><span>·</span>
+        <span>DISPERSION</span><span>·</span><span>DIAMOND</span><span>·</span><span>WATER</span><span>·</span>
+        <span>GLASS</span><span>·</span><span>TIR</span>
+      </div>
+    </div>
+    <nav class="series-nav" aria-label="Series navigation">
+      <a href="https://how-surfaces-work-production.up.railway.app/">Lesson 01 · Surfaces</a>
+      <a href="https://how-textures-work-production.up.railway.app/">Lesson 02 · Textures</a>
+      <a href="https://how-surfaces-work-production.up.railway.app/sheen/">Lesson 03 · Soft</a>
+      <a href="https://how-textures-work-preview-production.up.railway.app/wear/">Lesson 04 · Wear</a>
+      <a href="https://how-surfaces-work-l05-preview-production.up.railway.app/fresnel/">Lesson 05 · Edges</a>
+      <a href="https://how-textures-work-l06-preview-production.up.railway.app/grain/">Lesson 06 · Grain</a>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="hero-kicker">● Lesson 07 · Materials</p>
+        <h1>How Glass Bends <em>What You See</em></h1>
+        <p class="hero-lede">Light slows in denser materials and bends at the surface. Water, glass, and diamond each warp the world behind them by a different amount.</p>
+        <div class="hero-meta">
+          <div><b>Time</b> 20 min</div>
+          <div><b>You will learn</b> Refraction · IOR · thickness</div>
+          <div><b>Try first</b> Raise IOR on Specimen 01</div>
+          <div><b>Core lesson</b> Higher IOR bends more</div>
+        </div>
+        <p class="scroll-cue"><a href="#s01">Enter the lab ↓</a></p>
+      </div>
+      <div class="hero-stage">
+        <div class="view" data-scene="hero" tabindex="0" aria-label="Glass knot. Drag to move the glow lens."></div>
+      </div>
+      <div class="hero-gloss hero-diagram" aria-label="Lesson map">
+        <h2>What you will see</h2>
+        <div class="diagram-rows">
+          <div><b>IOR</b><span>How strongly a material bends light. Water about 1.33. Glass about 1.5. Diamond about 2.4.</span></div>
+          <div><b>Thickness</b><span>A thicker lens magnifies and warps the background more.</span></div>
+          <div><b>Dispersion</b><span>Different colors bend by slightly different amounts. A prism can show a spectrum.</span></div>
+          <div><b>TIR</b><span>At a steep exit angle, light can bounce inside a dense gem instead of leaving.</span></div>
+        </div>
+      </div>
+    </header>
+
+    <section class="specimen" id="s01">
+      <div class="view-wrap">
+        <div class="view-label">IOR · grid warp</div>
+        <div class="view" data-scene="ior" tabindex="0" aria-label="Glass sphere over a grid. Use the IOR slider."></div>
+      </div>
+      <aside class="placard">
+        <div>
+          <p class="specimen-num">Specimen 01 — Index of refraction</p>
+          <h2 class="specimen-title">Air to diamond. Watch the grid bend.</h2>
+          <div class="lesson">
+            <p>After Fresnel tells you how much light reflects, refraction is about the light that goes through and changes direction.</p>
+            <p>Raise the index of refraction and the checker behind the sphere warps more. That is Snell’s law in a picture.</p>
+          </div>
+        </div>
+        <div>
+          <div class="try"><strong>Try this</strong><p>Drag IOR from near 1.0 up toward 2.4. Then tap the presets for Water, Glass, and Diamond.</p></div>
+          <div class="ctrls" style="margin-top:1rem">
+            <label class="ctrl">IOR
+              <input id="ior-amt" type="range" min="1.0" max="2.4" step="0.01" value="1.5" />
+              <output id="ior-amt-out" for="ior-amt">1.50</output>
+            </label>
+            <p class="ior-readout" id="ior-label" aria-live="polite">Material: Glass · n ≈ 1.50</p>
+          </div>
+          <div class="chips" role="group" aria-label="IOR presets">
+            <button type="button" class="chip" data-ior="1.00" aria-pressed="false">Air</button>
+            <button type="button" class="chip" data-ior="1.33" aria-pressed="false">Water</button>
+            <button type="button" class="chip" data-ior="1.50" aria-pressed="true">Glass</button>
+            <button type="button" class="chip" data-ior="2.40" aria-pressed="false">Diamond</button>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="specimen" id="s02">
+      <div class="view-wrap">
+        <div class="view-label">Lens · thickness</div>
+        <div class="view" data-scene="lens" tabindex="0" aria-label="Glass lens. Use the thickness slider."></div>
+      </div>
+      <aside class="placard">
+        <div>
+          <p class="specimen-num">Specimen 02 — Thickness</p>
+          <h2 class="specimen-title">A thicker lens warps more</h2>
+          <div class="lesson">
+            <p>Curvature and path length through the glass both matter. A thin sheet barely shifts the grid. A thick lens magnifies it.</p>
+            <p>Keep IOR fixed and only change thickness so you see one cause at a time.</p>
+          </div>
+        </div>
+        <div>
+          <div class="try"><strong>Try this</strong><p>Slide Thickness from thin to thick. Watch the grid behind the lens grow and bend.</p></div>
+          <div class="ctrls" style="margin-top:1rem">
+            <label class="ctrl">Thickness
+              <input id="lens-thick" type="range" min="0.15" max="2.4" step="0.01" value="0.8" />
+              <output id="lens-thick-out" for="lens-thick">0.80</output>
+            </label>
+            <label class="ctrl">IOR
+              <input id="lens-ior" type="range" min="1.2" max="2.0" step="0.01" value="1.5" />
+              <output id="lens-ior-out" for="lens-ior">1.50</output>
+            </label>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="specimen" id="s03">
+      <div class="view-wrap">
+        <div class="view-label">Prism · dispersion</div>
+        <div class="view" data-scene="prism" tabindex="0" aria-label="Glass prism. Toggle dispersion."></div>
+      </div>
+      <aside class="placard">
+        <div>
+          <p class="specimen-num">Specimen 03 — Dispersion</p>
+          <h2 class="specimen-title">Colors bend by slightly different amounts</h2>
+          <div class="lesson">
+            <p>A prism can split white light because shorter wavelengths usually bend a little more than longer ones.</p>
+            <p>Turn Dispersion on for a subtle RGB fringe. Keep it soft so it stays truthful, not cartoon.</p>
+          </div>
+        </div>
+        <div>
+          <div class="try"><strong>Try this</strong><p>Press Dispersion on, then off. Compare the soft spectrum fringe along the prism edges.</p></div>
+          <div class="chips" role="group" aria-label="Dispersion toggle">
+            <button type="button" class="chip" data-disp="off" aria-pressed="true">Dispersion off</button>
+            <button type="button" class="chip" data-disp="on" aria-pressed="false">Dispersion on</button>
+          </div>
+          <div class="ctrls" style="margin-top:1rem">
+            <label class="ctrl">IOR
+              <input id="prism-ior" type="range" min="1.3" max="2.0" step="0.01" value="1.55" />
+              <output id="prism-ior-out" for="prism-ior">1.55</output>
+            </label>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="specimen" id="s04">
+      <div class="view-wrap">
+        <div class="view-label">Gem · TIR</div>
+        <div class="view" data-scene="gem" tabindex="0" aria-label="Cut gem comparing glass and diamond IOR."></div>
+      </div>
+      <aside class="placard">
+        <div>
+          <p class="specimen-num">Specimen 04 — Total internal reflection</p>
+          <h2 class="specimen-title">Same cut. Different sparkle.</h2>
+          <div class="lesson">
+            <p>When light inside a dense material hits the surface at a steep angle, it can bounce back instead of leaving. That is total internal reflection.</p>
+            <p>Diamond’s high IOR makes that bounce more likely than glass of the same shape, which is one reason a well-cut gem holds light.</p>
+          </div>
+        </div>
+        <div>
+          <div class="try"><strong>Try this</strong><p>Toggle Glass and Diamond. Watch how the high-IOR gem keeps brighter internal bounce.</p></div>
+          <div class="chips" role="group" aria-label="Gem material">
+            <button type="button" class="chip" data-gem="glass" aria-pressed="false">Glass n≈1.5</button>
+            <button type="button" class="chip" data-gem="diamond" aria-pressed="true">Diamond n≈2.4</button>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="real-world" id="real-world" aria-labelledby="real-world-title">
+      <div>
+        <p class="real-world-kicker">After the lab</p>
+        <h2 id="real-world-title">Where you see this</h2>
+        <p class="lede">Refraction is everyday craft for people who light glass, liquid, bottles, headlights, and façades.</p>
+      </div>
+      <ol class="real-list">
+        <li>
+          <span class="n" aria-hidden="true">01</span>
+          <div>
+            <h3>Glass and liquid in film and games</h3>
+            <p class="job">Look-development artist · lighting artist</p>
+            <p>Look-development and lighting artists set IOR and thickness so windows, bottles, and oceans bend the scene behind them. Without refraction, clear materials look like painted plastic.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">02</span>
+          <div>
+            <h3>Bottles, perfume, and drinkware online</h3>
+            <p class="job">3D product visualization artist</p>
+            <p>Product visualization artists rely on transmission and IOR so glass bottles magnify labels and liquid volume reads as real. Clients judge those stills against photography before a mold is cut.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">03</span>
+          <div>
+            <h3>Headlights and windshields in car renders</h3>
+            <p class="job">Automotive CGI artist</p>
+            <p>Automotive CGI artists model headlight lenses and windshields with accurate IOR so beams and cabin views bend the right way. That glass work is part of every exterior and night lighting pass.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">04</span>
+          <div>
+            <h3>Storefront and façade glass in architecture images</h3>
+            <p class="job">Archviz artist</p>
+            <p>Archviz artists give storefronts and curtain walls enough refraction and thickness that street life warps gently through the glass. Flat opacity alone makes a building look like a solid block.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">05</span>
+          <div>
+            <h3>Measuring refractive index in the lab</h3>
+            <p class="job">Optical engineer · materials scientist</p>
+            <p>Optical engineers and materials scientists measure refractive index for glass, plastics, and coatings. Those measured n values are the same numbers students dial on the IOR slider here.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="teachers" id="teachers">
+      <div>
+        <h2>For teachers</h2>
+        <p class="lede">Short objectives, one classroom loop, and how refraction maps to studio and science practice.</p>
+      </div>
+      <div class="teach-grid">
+        <div class="teach-card">
+          <h3>Learning objectives</h3>
+          <ul>
+            <li>State that denser materials bend light more (higher IOR).</li>
+            <li>Recall water ≈ 1.33, glass ≈ 1.5, diamond ≈ 2.4.</li>
+            <li>Explain why thickness and curvature increase the warp.</li>
+            <li>Describe dispersion as wavelength-dependent bend, kept subtle.</li>
+          </ul>
+        </div>
+        <div class="teach-card">
+          <h3>10-minute classroom activity</h3>
+          <p>1) Look through a drinking glass at lined paper. 2) Tip the glass and note the warp. 3) Match it on Specimen 01 by raising IOR. 4) On Specimen 02, write one sentence on why a thicker lens magnifies more.</p>
+        </div>
+        <div class="teach-card">
+          <h3>Art &amp; design map</h3>
+          <p>Liquid and glass look-dev, bottle product shots, headlight glass, storefront archviz.</p>
+        </div>
+        <div class="teach-card">
+          <h3>Materials science map</h3>
+          <p>Snell’s law, refractive index, dispersion, total internal reflection, Abbe / refractometer practice.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div>How Glass Bends What You See · Lesson 07 · Materials · <a href="https://how-surfaces-work-production.up.railway.app/">Lesson 01</a> · <a href="https://how-surfaces-work-l05-preview-production.up.railway.app/fresnel/">Lesson 05</a></div>
+      <div><a href="#top">Back to top</a></div>
+    </footer>
+  </div>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
