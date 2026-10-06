@@ -182,14 +182,14 @@ const heroScene = makeScene(document.querySelector('[data-scene="hero"]'), { bg:
   heroScene.background = null;
   heroScene.environment = envMap;
   const mat = carPaintMat({ clearcoat: 1, clearcoatRoughness: 0.05, roughness: 0.38 });
-  const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.82, 64, 48), mat);
+  const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.88, 64, 48), mat);
   heroScene.add(sphere);
   const knot = new THREE.Mesh(
     new THREE.TorusKnotGeometry(0.38, 0.12, 120, 18),
     carPaintMat({ color: 0x8a1020, clearcoat: 1, clearcoatRoughness: 0.04, roughness: 0.35 })
   );
-  knot.position.set(0.58, -0.42, 0.28);
-  knot.scale.setScalar(0.5);
+  knot.position.set(0.62, -0.45, 0.3);
+  knot.scale.setScalar(0.55);
   heroScene.add(knot);
   const key = addKeyLight(heroScene, 0xfff4ea, 3.4);
   key.position.set(2.0, 3.0, 2.2);
@@ -199,6 +199,11 @@ const heroScene = makeScene(document.querySelector('[data-scene="hero"]'), { bg:
   heroScene.userData.heroPost = makeHeroPost(ACCENT);
   heroScene.userData.controls.enabled = false;
   heroScene.userData.update = (t) => {
+    const cam = heroScene.userData.camera;
+    const a = cam.aspect || 1;
+    // Landscape phone views are very wide and short — move closer so the hero stays readable.
+    // Portrait / desk: pull back so mask outside-bg stays clean.
+    cam.position.z = a > 2.2 ? 3.05 : a > 1.35 ? 3.45 : 3.75;
     if (!reducedMotion) {
       sphere.rotation.y = t * 0.28;
       knot.rotation.x = t * 0.35;
