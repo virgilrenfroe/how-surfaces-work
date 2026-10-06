@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="How Soft Bodies Glow Inside — Lesson 09 · Materials. Subsurface scattering in wax, jade, and skin-like materials." />
+  <title>How Soft Bodies Glow Inside · Lesson 09 · Materials</title>
+  <meta property="og:title" content="How Soft Bodies Glow Inside · Lesson 09 · Materials" />
+  <meta property="og:description" content="Lesson 09 · Materials. See why wax, jade, and thin tissue glow when light enters and scatters inside." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="How Soft Bodies Glow Inside · Lesson 09 · Materials" />
+  <meta name="twitter:description" content="Lesson 09 · Materials. See why wax, jade, and thin tissue glow when light enters and scatters inside." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0c0806;
+      --paper: #fff4ee;
+      --cream: #f5dcc8;
+      --mute: rgba(255, 244, 238, 0.58);
+      --dim: rgba(255, 244, 238, 0.28);
+      --accent: #ff8f6b;
+      --accent2: #ffc49a;
+      --steel: #e8a888;
+      --line: rgba(255, 244, 238, 0.14);
+      --card: #14100e;
+      --placard: #100c0a;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --display: "Space Grotesk", sans-serif;
+      --body: "Gabarito", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    body {
+      margin: 0; background: var(--ink); color: var(--paper);
+      font-family: var(--body); font-size: 16px; line-height: 1.5; overflow-x: hidden;
+    }
+    #c { position: fixed; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; pointer-events: none; }
+    .content { position: relative; z-index: 1; }
+    .content .view, .content .chip, .content .ctrl { pointer-events: auto; }
+    .ticker {
+      position: relative; z-index: 6; overflow: hidden; border-bottom: 1px solid var(--line);
+      background: #000; height: 28px; display: flex; align-items: center; pointer-events: none;
+    }
+    .ticker-track { display: flex; gap: 1.5rem; white-space: nowrap; animation: tick 48s linear infinite; padding-left: 1rem; }
+    .ticker-track span { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent2); }
+    @keyframes tick { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
+    .series-nav {
+      display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: flex-end;
+      max-width: min(98vw, 820px); position: absolute; top: clamp(1rem, 3vw, 1.75rem);
+      right: clamp(1rem, 3vw, 2rem); z-index: 5; font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.14em; text-transform: uppercase;
+    }
+    .series-nav a {
+      color: var(--paper); text-decoration: none; border: 1px solid var(--line);
+      border-bottom: 1px solid var(--accent); border-radius: 999px; padding: 0.45rem 0.85rem;
+      transition: background 0.18s ease, color 0.18s ease;
+    }
+    .series-nav a:hover { background: var(--accent); color: #1a0c08; border-color: var(--accent); }
+    .hero {
+      display: grid; grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.25fr);
+      gap: 0; min-height: 88vh; padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 4vw, 3rem) 2rem;
+      position: relative;
+    }
+    .hero-copy { display: flex; flex-direction: column; justify-content: center; padding-right: clamp(1rem, 3vw, 2rem); }
+    .hero-kicker { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent2); margin: 0 0 1rem; }
+    .hero h1 {
+      font-family: var(--display); font-weight: 500; font-size: clamp(2.6rem, 7vw, 4.6rem);
+      letter-spacing: -0.045em; line-height: 0.95; margin: 0 0 1rem; max-width: 12ch;
+    }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero-lede { color: var(--mute); max-width: 36ch; margin: 0 0 1.25rem; font-size: 1.05rem; }
+    .hero-meta {
+      display: grid; gap: 0.35rem; font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); margin-bottom: 1.5rem;
+    }
+    .hero-meta b { color: var(--steel); font-weight: 500; }
+    .scroll-cue { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin-top: 1.5rem; }
+    .scroll-cue a { color: var(--paper); text-decoration: none; border-bottom: 1px solid var(--accent); }
+    .hero-stage { position: relative; min-height: 52vh; }
+    .hero-stage .view[data-scene="hero"] { width: 100%; height: 100%; min-height: 52vh; touch-action: none; }
+    .hero-gloss {
+      grid-column: 1 / -1; border-top: 1px solid var(--line); margin-top: 1.5rem; padding-top: 1.25rem;
+    }
+    .hero-gloss h2 {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+      margin: 0 0 0.85rem; color: var(--accent);
+    }
+    .diagram-rows { display: grid; gap: 0.55rem; font-size: 13px; color: var(--cream); }
+    .diagram-rows div {
+      display: grid; grid-template-columns: 7.5rem 1fr; gap: 0.6rem; align-items: baseline;
+      border-bottom: 1px solid var(--line); padding-bottom: 0.45rem;
+    }
+    .diagram-rows b {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--steel); font-weight: 400;
+    }
+    .specimen {
+      scroll-margin-top: 8px; display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.85fr);
+      gap: 0; min-height: 78vh; border-top: 1px solid var(--line); position: relative;
+    }
+    .view-wrap { position: relative; min-height: 52vh; background: transparent; }
+    .view { width: 100%; height: 100%; min-height: 52vh; position: relative; touch-action: none; }
+    .view-label {
+      position: absolute; top: 14px; left: 14px; z-index: 3; font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; padding: 6px 10px;
+      background: rgba(12, 8, 6, 0.72); border: 1px solid var(--line); color: var(--accent2); border-radius: 999px;
+    }
+    .placard {
+      background: var(--placard); border-left: 1px solid var(--line); padding: clamp(1.25rem, 3vw, 2rem);
+      display: flex; flex-direction: column; justify-content: space-between; gap: 1.25rem;
+    }
+    .specimen-num { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin: 0 0 0.5rem; }
+    .specimen-title {
+      font-family: var(--display); font-weight: 500; font-size: clamp(1.6rem, 3.5vw, 2.3rem);
+      letter-spacing: -0.03em; line-height: 1.1; margin: 0 0 0.75rem;
+    }
+    .lesson { color: var(--cream); font-size: 15px; }
+    .lesson p { margin: 0 0 0.65rem; }
+    .try {
+      border: 1px solid var(--line); padding: 0.9rem 1rem; background: var(--card);
+      font-size: 14.5px; color: var(--cream);
+    }
+    .try strong {
+      display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--accent2); margin-bottom: 0.4rem; font-weight: 500;
+    }
+    .ctrls { display: grid; gap: 0.65rem; }
+    .ctrl {
+      display: grid; grid-template-columns: 7.2rem 1fr 2.8rem; gap: 0.55rem; align-items: center;
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--mute);
+    }
+    .ctrl input[type="range"] {
+      width: 100%; accent-color: var(--accent); height: 1.4rem; touch-action: none;
+    }
+    .ctrl output { text-align: right; color: var(--paper); }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+    .chip {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+      border: 1px solid var(--line); background: transparent; color: var(--paper); padding: 0.45rem 0.7rem;
+      border-radius: 999px; cursor: pointer;
+    }
+    .chip[aria-pressed="true"] { background: var(--accent); color: #1a0c08; border-color: var(--accent); }
+    .sss-diagram {
+      border: 1px solid var(--line); background: #120e0c; padding: 0.85rem 1rem 0.65rem; margin-top: 0.75rem;
+    }
+    .sss-diagram svg { width: 100%; height: auto; display: block; }
+    .sss-diagram figcaption {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--dim); margin-top: 0.45rem;
+    }
+    .real-world {
+      border-top: 1px solid var(--line); padding: clamp(2.25rem, 5.5vw, 4.5rem) clamp(1.25rem, 4vw, 3rem);
+      background: #100c0a; display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: clamp(1.75rem, 4vw, 3.5rem); align-items: start;
+    }
+    .real-world h2 {
+      font-family: var(--display); font-weight: 500; font-size: clamp(2.1rem, 5.2vw, 3.5rem);
+      letter-spacing: -0.04em; line-height: 1; margin: 0 0 0.85rem; max-width: 12ch;
+    }
+    .real-world .lede { color: var(--mute); max-width: 34ch; margin: 0; font-size: 15.5px; }
+    .real-world-kicker {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent); margin: 0 0 0.75rem;
+    }
+    .real-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+    .real-list > li {
+      display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); gap: 0.85rem 1rem;
+      padding: 1.15rem 0 1.25rem; border-top: 1px solid var(--line);
+    }
+    .real-list > li:last-child { border-bottom: 1px solid var(--line); }
+    .real-list .n { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--accent); padding-top: 0.2rem; }
+    .real-list h3 {
+      font-family: var(--display); font-weight: 500; font-size: clamp(1.15rem, 2.4vw, 1.45rem);
+      letter-spacing: -0.02em; line-height: 1.2; margin: 0 0 0.35rem; color: var(--paper);
+    }
+    .real-list .job {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--steel); margin: 0 0 0.55rem;
+    }
+    .real-list p { margin: 0; color: var(--cream); font-size: 15px; max-width: 58ch; }
+    .teachers {
+      border-top: 1px solid var(--line); padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 4vw, 3rem);
+      background: #120e0c; display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(1.5rem, 4vw, 3rem);
+    }
+    .teachers h2 {
+      font-family: var(--display); font-weight: 500; font-size: clamp(2.1rem, 5.2vw, 3.5rem);
+      letter-spacing: -0.04em; line-height: 1; margin: 0 0 0.75rem;
+    }
+    .teachers .lede { color: var(--mute); max-width: 36ch; margin: 0; }
+    .teach-grid { display: grid; gap: 1rem; }
+    .teach-card { border: 1px solid var(--line); padding: 1.1rem 1.2rem; background: var(--card); }
+    .teach-card h3 {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--steel); margin: 0 0 0.6rem; font-weight: 700;
+    }
+    .teach-card ul { margin: 0; padding-left: 1.1rem; color: var(--cream); font-size: 14.5px; }
+    .teach-card li { margin-bottom: 0.35rem; }
+    .teach-card p { margin: 0; font-size: 14.5px; color: var(--cream); }
+    footer {
+      border-top: 1px solid var(--line); padding: 1.25rem clamp(1.25rem, 4vw, 3rem) 2rem;
+      display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; justify-content: space-between;
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim);
+    }
+    footer a { color: var(--paper); text-decoration: none; border-bottom: 1px solid var(--accent); }
+    #err {
+      position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 20; background: #3a1212;
+      color: #ffd6d6; padding: 12px 14px; border-radius: 8px; display: none; white-space: pre-wrap;
+      font-family: var(--mono); font-size: 12px; pointer-events: none;
+    }
+    @media (pointer: coarse), (hover: none) {
+      .ctrl { min-height: 44px; }
+      .ctrl input[type="range"] { height: 44px; min-height: 44px; margin: 0; padding: 0; }
+    }
+    @media (max-width: 700px) {
+      .ctrl input[type="range"] { height: 44px; min-height: 44px; }
+    }
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 2rem; }
+      .specimen, .teachers, .real-world { grid-template-columns: 1fr; }
+      .placard { border-left: none; border-top: 1px solid var(--line); }
+      .view, .view-wrap { min-height: 42vh; }
+      .specimen { min-height: auto; }
+      .real-world { gap: 1.5rem; }
+      .real-list > li { grid-template-columns: 2rem minmax(0, 1fr); }
+      .series-nav { position: relative; top: auto; right: auto; max-width: none; justify-content: flex-start; padding: 0.75rem 1.25rem; }
+    }
+    @media (max-height: 480px) and (orientation: landscape) {
+      .hero { min-height: auto; padding-top: 1rem; padding-bottom: 0.75rem; }
+      .hero-lede, .hero-meta { display: none; }
+      .hero-stage, .hero-stage .view[data-scene="hero"] { min-height: 36vh; }
+      .view, .view-wrap { min-height: 62vh; }
+      .specimen { min-height: auto; }
+      .placard .lede { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .chip, .series-nav a { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div id="err" role="alert"></div>
+  <div class="content" id="top">
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track">
+        <span>SCATTER</span><span>·</span><span>SSS</span><span>·</span><span>WAX</span><span>·</span>
+        <span>JADE</span><span>·</span><span>SKIN</span><span>·</span><span>BACKLIGHT</span><span>·</span>
+        <span>ATTENUATION</span><span>·</span><span>THIN GLOW</span><span>·</span><span>TRANSLUCENT</span><span>·</span>
+        <span>SCATTER</span><span>·</span><span>SSS</span><span>·</span><span>WAX</span><span>·</span>
+        <span>JADE</span><span>·</span><span>SKIN</span><span>·</span><span>BACKLIGHT</span><span>·</span>
+        <span>ATTENUATION</span><span>·</span><span>THIN GLOW</span><span>·</span><span>TRANSLUCENT</span>
+      </div>
+    </div>
+    <nav class="series-nav" aria-label="Series navigation">
+      <a href="https://how-surfaces-work-production.up.railway.app/">Lesson 01 · Surfaces</a>
+      <a href="https://how-textures-work-production.up.railway.app/">Lesson 02 · Textures</a>
+      <a href="https://how-surfaces-work-production.up.railway.app/sheen/">Lesson 03 · Soft</a>
+      <a href="https://how-textures-work-preview-production.up.railway.app/wear/">Lesson 04 · Wear</a>
+      <a href="https://how-surfaces-work-l05-preview-production.up.railway.app/fresnel/">Lesson 05 · Edges</a>
+      <a href="https://how-textures-work-l06-preview-production.up.railway.app/grain/">Lesson 06 · Grain</a>
+      <a href="https://how-surfaces-work-l07-preview-production.up.railway.app/refract/">Lesson 07 · Glass</a>
+      <a href="https://how-textures-work-l08-preview-production.up.railway.app/uv/">Lesson 08 · UV</a>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="hero-kicker">● Lesson 09 · Materials</p>
+        <h1>How Soft Bodies Glow <em>Inside</em></h1>
+        <p class="hero-lede">Some materials do not stop light at the surface. Light enters, scatters inside, and exits nearby. That soft glow is why wax and jade look alive under a lamp.</p>
+        <div class="hero-meta">
+          <div><b>Time</b> 20 min</div>
+          <div><b>You will learn</b> Scatter · thickness · warm tint</div>
+          <div><b>Try first</b> Raise Scatter on Specimen 01</div>
+          <div><b>Core lesson</b> Light exits offset from where it entered</div>
+        </div>
+        <p class="scroll-cue"><a href="#s01">Enter the lab ↓</a></p>
+      </div>
+      <div class="hero-stage">
+        <div class="view" data-scene="hero" tabindex="0" aria-label="Glowing wax form. Drag to move the glow lens."></div>
+      </div>
+      <div class="hero-gloss hero-diagram" aria-label="Lesson map">
+        <h2>What you will see</h2>
+        <div class="diagram-rows">
+          <div><b>Scatter</b><span>How far light travels inside before it fades. Longer paths make a softer glow.</span></div>
+          <div><b>Thin parts</b><span>Ears, leaves, and thin rims glow more than thick cores under the same backlight.</span></div>
+          <div><b>Warm tint</b><span>Longer wavelengths often travel farther in tissue, so the exit light can look warmer.</span></div>
+          <div><b>Opaque</b><span>Plastic of the same color stops light at the surface and stays dark from behind.</span></div>
+        </div>
+      </div>
+    </header>
+
+    <section class="specimen" id="s01">
+      <div class="view-wrap">
+        <div class="view-label">Wax · vs opaque</div>
+        <div class="view" data-scene="wax" tabindex="0" aria-label="Wax block next to opaque plastic. Use the scatter slider."></div>
+      </div>
+      <aside class="placard">
+        <div>
+          <p class="specimen-num">Specimen 01 — Scatter distance</p>
+          <h2 class="specimen-title">Same color. Only one glows.</h2>
+          <div class="lesson">
+            <p>Lesson 03 showed soft transmission. Here the backlight makes scatter distance obvious.</p>
+            <p>The wax lets light enter, bounce inside, and exit. The opaque block of the same hue stays dark from behind.</p>
+          </div>
+          <figure class="sss-diagram" aria-label="Scatter path diagram">
+            <svg viewBox="0 0 320 90" role="img" aria-label="Light enters, scatters inside, and exits offset">
+              <rect width="320" height="90" fill="#120e0c" />
+              <rect x="110" y="18" width="100" height="54" rx="6" fill="#2a1810" stroke="#ff8f6b" stroke-width="1.5" />
+              <path d="M40 45 H110" stroke="#ffc49a" stroke-width="2" marker-end="url(#arr)" />
+              <path d="M125 40 Q150 28 165 48 T210 42" stroke="#ff8f6b" stroke-width="2" fill="none" opacity="0.9" />
+              <path d="M210 42 H280" stroke="#ffc49a" stroke-width="2" />
+              <circle cx="210" cy="42" r="3" fill="#ff8f6b" />
+              <circle cx="110" cy="45" r="3" fill="#ffc49a" />
+              <text x="28" y="78" fill="rgba(255,244,238,0.45)" font-size="9" font-family="JetBrains Mono, monospace">ENTER</text>
+              <text x="140" y="78" fill="rgba(255,244,238,0.45)" font-size="9" font-family="JetBrains Mono, monospace">SCATTER</text>
+              <text x="248" y="78" fill="rgba(255,244,238,0.45)" font-size="9" font-family="JetBrains Mono, monospace">EXIT</text>
+              <defs>
+                <marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                  <path d="M0,0 L6,3 L0,6 Z" fill="#ffc49a" />
+                </marker>
+              </defs>
+            </svg>
+            <figcaption>Light enters, scatters inside, exits nearby</figcaption>
+          </figure>
+        </div>
+        <div>
+          <div class="try"><strong>Try this</strong><p>Raise Scatter distance. Watch the wax brighten from behind while the opaque block stays dark.</p></div>
+          <div class="ctrls" style="margin-top:1rem">
+            <label class="ctrl">Scatter
+              <input id="wax-scatter" type="range" min="0.08" max="2.4" step="0.01" value="0.55" />
+              <output id="wax-scatter-out" for="wax-scatter">0.55</output>
+            </label>
+            <label class="ctrl">Backlight
+              <input id="wax-back" type="range" min="0.2" max="4" step="0.05" value="2.4" />
+              <output id="wax-back-out" for="wax-back">2.40</output>
+            </label>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="specimen" id="s02">
+      <div class="view-wrap">
+        <div class="view-label">Thin · thick</div>
+        <div class="view" data-scene="thin" tabindex="0" aria-label="Thin ring and thick ball. Use the scale slider."></div>
+      </div>
+      <aside class="placard">
+        <div>
+          <p class="specimen-num">Specimen 02 — Thin parts glow more</p>
+          <h2 class="specimen-title">A thin rim lights up first</h2>
+          <div class="lesson">
+            <p>Under the same backlight, thin regions have a shorter path through the material, so more light exits.</p>
+            <p>That is why an ear rim or a leaf edge can glow while a thicker center stays darker. This is a classroom demo of scattering, not a medical claim.</p>
+          </div>
+        </div>
+        <div>
+          <div class="try"><strong>Try this</strong><p>Slide Scale. The thin torus rim stays brighter than the thick ball as the forms change size.</p></div>
+          <div class="ctrls" style="margin-top:1rem">
+            <label class="ctrl">Scale
+              <input id="thin-scale" type="range" min="0.55" max="1.45" step="0.01" value="1" />
+              <output id="thin-scale-out" for="thin-scale">1.00</output>
+            </label>
+            <label class="ctrl">Scatter
+              <input id="thin-scatter" type="range" min="0.15" max="2.0" step="0.01" value="0.7" />
+              <output id="thin-scatter-out" for="thin-scatter">0.70</output>
+            </label>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="specimen" id="s03">
+      <div class="view-wrap">
+        <div class="view-label">Warm tint</div>
+        <div class="view" data-scene="tint" tabindex="0" aria-label="Backlit form with warm scatter tint slider."></div>
+      </div>
+      <aside class="placard">
+        <div>
+          <p class="specimen-num">Specimen 03 — Warm scatter tint</p>
+          <h2 class="specimen-title">From white glow to warm exit light</h2>
+          <div class="lesson">
+            <p>In many tissues, longer wavelengths travel farther than shorter ones. The exit light can look warmer than the entry light.</p>
+            <p>Slide the tint toward warm red-orange to see that bias. Keep the note modest: it is a teaching picture of wavelength-dependent scatter, not a diagnosis.</p>
+          </div>
+        </div>
+        <div>
+          <div class="try"><strong>Try this</strong><p>Move Warm tint from cool white toward red-orange. Watch the glow through the form shift.</p></div>
+          <div class="ctrls" style="margin-top:1rem">
+            <label class="ctrl">Warm tint
+              <input id="tint-warm" type="range" min="0" max="1" step="0.01" value="0.55" />
+              <output id="tint-warm-out" for="tint-warm">0.55</output>
+            </label>
+            <label class="ctrl">Scatter
+              <input id="tint-scatter" type="range" min="0.2" max="2.2" step="0.01" value="0.9" />
+              <output id="tint-scatter-out" for="tint-scatter">0.90</output>
+            </label>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="real-world" id="real-world" aria-labelledby="real-world-title">
+      <div>
+        <p class="real-world-kicker">After the lab</p>
+        <h2 id="real-world-title">Where you see this</h2>
+        <p class="lede">Subsurface scatter is everyday craft for people who light skin, candles, soap, and translucent plastics.</p>
+      </div>
+      <ol class="real-list">
+        <li>
+          <span class="n" aria-hidden="true">01</span>
+          <div>
+            <h3>Skin, ears, and noses in film and games</h3>
+            <p class="job">Look-development artist · character artist</p>
+            <p>Look-development and character artists dial scatter so ears and nostrils glow under backlight while foreheads stay softer. Without it, digital skin reads like painted rubber.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">02</span>
+          <div>
+            <h3>Candles, soap, and milky plastics in product shots</h3>
+            <p class="job">3D product visualization artist</p>
+            <p>Product visualization artists use scatter so candles and soap bars glow from within. Clients compare those stills to real wax under a desk lamp before approving a mold.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">03</span>
+          <div>
+            <h3>Tissue under light in teaching visuals</h3>
+            <p class="job">Medical · scientific visualization artist</p>
+            <p>Scientific visualization artists show how strong backlight can make thin tissue look warmer. They keep claims modest and stick to well-known classroom demos of scatter in soft media.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">04</span>
+          <div>
+            <h3>Translucent plastics and soft-touch parts</h3>
+            <p class="job">CMF designer · industrial designer</p>
+            <p>CMF and industrial designers review milky plastics and soft-touch housings for how light passes through edges. Scatter distance changes whether a part feels cheap or premium under store lighting.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">05</span>
+          <div>
+            <h3>Light transport in translucent media</h3>
+            <p class="job">Materials scientist</p>
+            <p>Materials scientists study how light scatters and attenuates inside wax, polymers, and tissue phantoms. Those measured transport lengths are the same idea students explore with the Scatter slider.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="teachers" id="teachers">
+      <div>
+        <h2>For teachers</h2>
+        <p class="lede">Short objectives, one classroom loop, and how scatter maps to studio and science practice.</p>
+      </div>
+      <div class="teach-grid">
+        <div class="teach-card">
+          <h3>Learning objectives</h3>
+          <ul>
+            <li>Explain that scatter means light exits near, not only at, the entry point.</li>
+            <li>Predict that thin parts glow more than thick parts under backlight.</li>
+            <li>Describe a warm bias when longer wavelengths travel farther.</li>
+            <li>Contrast translucent wax with opaque plastic of the same color.</li>
+          </ul>
+        </div>
+        <div class="teach-card">
+          <h3>10-minute classroom activity</h3>
+          <p>1) Hold a hand over a safe desk lamp and note which edges glow. 2) Open Specimen 02 and match thin vs thick. 3) On Specimen 01, write Scatter and compare wax to opaque. 4) Write one sentence on why the opaque block stays dark.</p>
+        </div>
+        <div class="teach-card">
+          <h3>Art &amp; design map</h3>
+          <p>Character skin look-dev, candle and soap product shots, CMF reviews of milky plastics.</p>
+        </div>
+        <div class="teach-card">
+          <h3>Materials science map</h3>
+          <p>Subsurface scattering, attenuation length, wavelength-dependent transport, translucent media.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div>How Soft Bodies Glow Inside · Lesson 09 · Materials · <a href="https://how-surfaces-work-production.up.railway.app/">Lesson 01</a> · <a href="https://how-surfaces-work-production.up.railway.app/sheen/">Lesson 03</a></div>
+      <div><a href="#top">Back to top</a></div>
+    </footer>
+  </div>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
