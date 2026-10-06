@@ -320,6 +320,86 @@
     }
     .ctrl output { text-align: right; color: var(--paper); }
 
+
+    /* —— Where you see this (real-world jobs) —— */
+    .real-world {
+      border-top: 1px solid var(--line);
+      padding: clamp(2.25rem, 5.5vw, 4.5rem) clamp(1.25rem, 4vw, 3rem);
+      background: #100e12;
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: clamp(1.75rem, 4vw, 3.5rem);
+      align-items: start;
+    }
+    .real-world h2 {
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: clamp(2.1rem, 5.2vw, 3.5rem);
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin: 0 0 0.85rem;
+      max-width: 12ch;
+    }
+    .real-world .lede {
+      color: var(--mute);
+      max-width: 34ch;
+      margin: 0;
+      font-size: 15.5px;
+    }
+    .real-world-kicker {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 0.75rem;
+    }
+    .real-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0;
+    }
+    .real-list > li {
+      display: grid;
+      grid-template-columns: 2.4rem minmax(0, 1fr);
+      gap: 0.85rem 1rem;
+      padding: 1.15rem 0 1.25rem;
+      border-top: 1px solid var(--line);
+    }
+    .real-list > li:last-child { border-bottom: 1px solid var(--line); }
+    .real-list .n {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      padding-top: 0.2rem;
+    }
+    .real-list h3 {
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: clamp(1.15rem, 2.4vw, 1.45rem);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin: 0 0 0.35rem;
+      color: var(--paper);
+    }
+    .real-list .job {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--steel);
+      margin: 0 0 0.55rem;
+    }
+    .real-list p {
+      margin: 0;
+      color: var(--cream);
+      font-size: 15px;
+      max-width: 58ch;
+    }
+
     .teachers {
       border-top: 1px solid var(--line);
       padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 4vw, 3rem);
@@ -459,9 +539,12 @@
         padding-bottom: 2rem;
       }
       .hero h1 { max-width: none; }
-      .specimen, .centerpiece .placard, .teachers, .map-cols {
+      .specimen, .centerpiece .placard, .teachers, .map-cols, .real-world {
         grid-template-columns: 1fr;
       }
+      .real-world { gap: 1.5rem; }
+      .real-list > li { grid-template-columns: 2rem minmax(0, 1fr); }
+
       .placard { border-left: none; border-top: 1px solid var(--line); }
       .centerpiece .views { grid-template-columns: 1fr; }
       .centerpiece .view-pane { border-right: none; border-bottom: 1px solid var(--line); min-height: 42vh; }
@@ -855,6 +938,57 @@
           </div>
         </div>
       </aside>
+    </section>
+
+
+    <section class="real-world" id="real-world" aria-labelledby="real-world-title">
+      <div>
+        <p class="real-world-kicker">After the lab</p>
+        <h2 id="real-world-title">Where you see this</h2>
+        <p class="lede">Soft finishes show up in costumes, paint, packaging, and product shots. People in named jobs use sheen, thin-film color, and soft transmission every day.</p>
+      </div>
+      <ol class="real-list">
+        <li>
+          <span class="n" aria-hidden="true">01</span>
+          <div>
+            <h3>Velvet costumes and soft furnishings</h3>
+            <p class="job">Look-development artist · texture artist</p>
+            <p>Look-development and texture artists build fabric materials for characters and props. Sheen helps velvet and fleece catch a bright rim of light at grazing angles without turning into shiny plastic.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">02</span>
+          <div>
+            <h3>Color-shift car paint and cosmetics</h3>
+            <p class="job">Automotive CGI artist · CMF designer</p>
+            <p>Some automotive paints and cosmetics use thin-film interference pigments that change color with viewing angle. Artists and CMF designers check those shifts under moving light so a flip-flop paint or a pearlescent finish matches the real pigment.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">03</span>
+          <div>
+            <h3>Soap films, oil slicks, and insect wings</h3>
+            <p class="job">Look-development artist</p>
+            <p>Thin-film iridescence is the same physics that colors a soap bubble. Look-development artists use it for bubbles, oil on water, and insect wings so hue bands move when the camera or the light moves.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">04</span>
+          <div>
+            <h3>Wax, jade, and translucent packaging</h3>
+            <p class="job">3D product visualization artist</p>
+            <p>Catalog and packaging images of candles, soap, and milky plastic bottles often use soft transmission so light enters the volume and scatters. Visualization artists set that glow so the object reads as wax or jade, not as colored glass.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">05</span>
+          <div>
+            <h3>Soft plastics and lit product parts</h3>
+            <p class="job">Industrial designer · materials scientist</p>
+            <p>Industrial designers and materials scientists study how light scatters in translucent plastics, wax, and stone. Soft transmission in a render helps them show whether a part will look solid, milky, or warmly lit from behind.</p>
+          </div>
+        </li>
+      </ol>
     </section>
 
     <section class="teachers" id="teachers">

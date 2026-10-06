@@ -334,6 +334,86 @@
     .ctrl output { text-align: right; color: var(--paper); }
 
     /* —— Teachers —— */
+
+    /* —— Where you see this (real-world jobs) —— */
+    .real-world {
+      border-top: 1px solid var(--line);
+      padding: clamp(2.25rem, 5.5vw, 4.5rem) clamp(1.25rem, 4vw, 3rem);
+      background: #0c0b09;
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: clamp(1.75rem, 4vw, 3.5rem);
+      align-items: start;
+    }
+    .real-world h2 {
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: clamp(2.1rem, 5.2vw, 3.5rem);
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin: 0 0 0.85rem;
+      max-width: 12ch;
+    }
+    .real-world .lede {
+      color: var(--mute);
+      max-width: 34ch;
+      margin: 0;
+      font-size: 15.5px;
+    }
+    .real-world-kicker {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 0.75rem;
+    }
+    .real-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0;
+    }
+    .real-list > li {
+      display: grid;
+      grid-template-columns: 2.4rem minmax(0, 1fr);
+      gap: 0.85rem 1rem;
+      padding: 1.15rem 0 1.25rem;
+      border-top: 1px solid var(--line);
+    }
+    .real-list > li:last-child { border-bottom: 1px solid var(--line); }
+    .real-list .n {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      padding-top: 0.2rem;
+    }
+    .real-list h3 {
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: clamp(1.15rem, 2.4vw, 1.45rem);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin: 0 0 0.35rem;
+      color: var(--paper);
+    }
+    .real-list .job {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--steel);
+      margin: 0 0 0.55rem;
+    }
+    .real-list p {
+      margin: 0;
+      color: var(--cream);
+      font-size: 15px;
+      max-width: 58ch;
+    }
+
     .teachers {
       border-top: 1px solid var(--line);
       padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 4vw, 3rem);
@@ -447,9 +527,12 @@
         padding-bottom: 2rem;
       }
       .hero h1 { max-width: none; }
-      .specimen, .centerpiece .placard, .teachers, .map-cols {
+      .specimen, .centerpiece .placard, .teachers, .map-cols, .real-world {
         grid-template-columns: 1fr;
       }
+      .real-world { gap: 1.5rem; }
+      .real-list > li { grid-template-columns: 2rem minmax(0, 1fr); }
+
       .placard { border-left: none; border-top: 1px solid var(--line); }
       .centerpiece .views { grid-template-columns: 1fr; }
       .centerpiece .view-pane { border-right: none; border-bottom: 1px solid var(--line); min-height: 42vh; }
@@ -814,6 +897,57 @@
           </div>
         </div>
       </aside>
+    </section>
+
+
+    <section class="real-world" id="real-world" aria-labelledby="real-world-title">
+      <div>
+        <p class="real-world-kicker">After the lab</p>
+        <h2 id="real-world-title">Where you see this</h2>
+        <p class="lede">These finishes are not only for demos. People in named jobs use the same ideas when they light chrome, satin, paint, and plastic for screens and stores.</p>
+      </div>
+      <ol class="real-list">
+        <li>
+          <span class="n" aria-hidden="true">01</span>
+          <div>
+            <h3>Film and game characters</h3>
+            <p class="job">Look-development artist</p>
+            <p>Look-development artists set how cloth, metal, and paint respond to light before final frames are made. They judge roughness, metalness, and clearcoat so a chrome buckle and a satin jacket stay believable when the light moves.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">02</span>
+          <div>
+            <h3>Online stores and furniture catalogs</h3>
+            <p class="job">3D product visualization artist</p>
+            <p>Many product pages show digital models instead of studio photos, especially when one chair needs many fabric and finish variants. Visualization artists tune metalness and roughness so chrome legs look sharp and soft wood stays matte under store lighting.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">03</span>
+          <div>
+            <h3>Car paint and trim in online builders</h3>
+            <p class="job">Automotive CGI artist</p>
+            <p>Online car builders show paint and trim as interactive 3D. Automotive CGI artists use clearcoat for lacquered paint and anisotropy for brushed metal so highlights stretch the way they do on a real panel.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">04</span>
+          <div>
+            <h3>Product finishes before tooling</h3>
+            <p class="job">Colour and material (CMF) designer</p>
+            <p>CMF designers choose how a product will look and feel: gloss plastic, soft-touch paint, or metal. They review digital finish samples with the same ideas—roughness, metalness, and layered clear coats—before parts are made.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">05</span>
+          <div>
+            <h3>Rooms and interiors for clients</h3>
+            <p class="job">Archviz artist</p>
+            <p>Architectural visualization artists place materials on walls, floors, and fixtures in room images. Correct roughness and metalness keep brushed steel railings and matte plaster from looking like plastic under soft daylight.</p>
+          </div>
+        </li>
+      </ol>
     </section>
 
     <section class="teachers" id="teachers">
