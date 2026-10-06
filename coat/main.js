@@ -177,19 +177,19 @@ function withTangents(geo) {
 }
 
 // —— Hero ——
-const heroScene = makeScene(document.querySelector('[data-scene="hero"]'), { bg: 0x000000, camZ: 3.1 });
+const heroScene = makeScene(document.querySelector('[data-scene="hero"]'), { bg: 0x000000, camZ: 3.55 });
 {
   heroScene.background = null;
   heroScene.environment = envMap;
   const mat = carPaintMat({ clearcoat: 1, clearcoatRoughness: 0.05, roughness: 0.38 });
-  const sphere = new THREE.Mesh(new THREE.SphereGeometry(1.05, 64, 48), mat);
+  const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.92, 64, 48), mat);
   heroScene.add(sphere);
   const knot = new THREE.Mesh(
     new THREE.TorusKnotGeometry(0.38, 0.12, 120, 18),
     carPaintMat({ color: 0x8a1020, clearcoat: 1, clearcoatRoughness: 0.04, roughness: 0.35 })
   );
-  knot.position.set(0.95, -0.55, 0.4);
-  knot.scale.setScalar(0.85);
+  knot.position.set(0.72, -0.48, 0.35);
+  knot.scale.setScalar(0.62);
   heroScene.add(knot);
   const key = addKeyLight(heroScene, 0xfff4ea, 3.4);
   key.position.set(2.0, 3.0, 2.2);
