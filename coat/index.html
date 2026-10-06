@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="How Clear Coats Stack — Lesson 12 · Materials. Clearcoat adds a sharp glossy layer over base paint." />
+  <title>How Clear Coats Stack · Lesson 12 · Materials</title>
+  <meta property="og:title" content="How Clear Coats Stack · Lesson 12 · Materials" />
+  <meta property="og:description" content="Lesson 12 · Materials. See how a clear lacquer layer adds a sharp highlight over a colored base." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="How Clear Coats Stack · Lesson 12 · Materials" />
+  <meta name="twitter:description" content="Lesson 12 · Materials. See how a clear lacquer layer adds a sharp highlight over a colored base." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #10080c;
+      --ink: #fff2f5;
+      --mute: rgba(255,242,245,0.62);
+      --line: rgba(255,59,92,0.2);
+      --accent: #ff3b5c;
+      --accent-2: #ff7a90;
+      --card: #1a0e14;
+      --try: rgba(255,59,92,0.08);
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --display: "Space Grotesk", sans-serif;
+      --body: "Gabarito", sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    body {
+      margin: 0; background: var(--bg); color: var(--ink);
+      font-family: var(--body); font-size: 16.5px; line-height: 1.55;
+      overflow-x: hidden; -webkit-text-size-adjust: 100%;
+    }
+    canvas#c {
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      display: block; z-index: 0; pointer-events: none;
+    }
+    #err {
+      display: none; position: fixed; left: 1rem; right: 1rem; bottom: 1rem;
+      z-index: 50; background: #2a1520; color: #ffd6e0; padding: 0.85rem 1rem;
+      border-radius: 10px; font-size: 14px;
+    }
+    .content { position: relative; z-index: 1; pointer-events: none; }
+    .content a, .content button, .content input, .content .chip,
+    .content .view, .content .ctrl { pointer-events: auto; }
+    .ticker {
+      overflow: hidden; border-bottom: 1px solid var(--line);
+      background: rgba(16,8,12,0.85); backdrop-filter: blur(8px);
+    }
+    .ticker-track {
+      display: flex; gap: 1.25rem; white-space: nowrap; padding: 0.55rem 0;
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--accent); animation: ticker 42s linear infinite;
+    }
+    .ticker-track span { opacity: 0.85; }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
+    .series-nav {
+      position: absolute; top: 2.6rem; right: 1rem; z-index: 5;
+      display: flex; flex-wrap: wrap; gap: 0.35rem; max-width: min(46rem, 62vw);
+      justify-content: flex-end;
+    }
+    .series-nav a {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.04em;
+      text-transform: uppercase; text-decoration: none; color: var(--mute);
+      border: 1px solid var(--line); border-radius: 999px; padding: 0.35rem 0.55rem;
+      background: rgba(16,8,12,0.7);
+    }
+    .series-nav a:hover { color: var(--accent); border-color: var(--accent); }
+    .hero {
+      display: grid; grid-template-columns: 1.05fr 1fr; align-items: center;
+      gap: 0; min-height: 88vh; padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 4vw, 3rem) 2rem;
+      position: relative;
+    }
+    .hero-kicker {
+      font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--accent); margin: 0 0 0.75rem;
+    }
+    .hero h1 {
+      font-family: var(--display); font-weight: 600; font-size: clamp(2.4rem, 5.5vw, 4.1rem);
+      line-height: 1.05; margin: 0 0 1rem; letter-spacing: -0.02em;
+    }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero-lede { color: var(--mute); max-width: 36ch; margin: 0 0 1.25rem; font-size: 17px; }
+    .hero-meta {
+      display: grid; gap: 0.35rem; font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--mute); margin-bottom: 1.25rem;
+    }
+    .hero-meta b { color: var(--accent); font-weight: 500; }
+    .scroll-cue a {
+      color: var(--accent); font-family: var(--mono); font-size: 12px;
+      letter-spacing: 0.08em; text-transform: uppercase; text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+    .hero-stage { position: relative; min-height: 52vh; }
+    .hero-stage .view[data-scene="hero"] { width: 100%; height: 100%; min-height: 52vh; touch-action: none; }
+    .glossary {
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem;
+      padding: 1.25rem clamp(1.25rem, 4vw, 3rem) 2rem; border-top: 1px solid var(--line);
+    }
+    .glossary h2 {
+      grid-column: 1 / -1; font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--accent); font-weight: 500; margin: 0 0 0.25rem;
+    }
+    .glossary div b {
+      display: block; font-family: var(--display); font-size: 14px; margin-bottom: 0.25rem;
+    }
+    .glossary div span { color: var(--mute); font-size: 14.5px; }
+    .specimen {
+      display: grid; grid-template-columns: 1.15fr 0.85fr;
+      gap: 0; min-height: 78vh; border-top: 1px solid var(--line); position: relative;
+    }
+    .view-wrap { position: relative; min-height: 52vh; background: transparent; }
+    .view { width: 100%; height: 100%; min-height: 52vh; position: relative; touch-action: none; }
+    .view-label {
+      position: absolute; top: 0.85rem; left: 0.85rem; z-index: 2;
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); background: rgba(16,8,12,0.75); border: 1px solid var(--line);
+      border-radius: 999px; padding: 0.4rem 0.7rem;
+    }
+    .placard {
+      padding: clamp(1.5rem, 3vw, 2.5rem); border-left: 1px solid var(--line);
+      display: flex; flex-direction: column; gap: 1rem;
+      background: linear-gradient(180deg, rgba(26,14,20,0.55), transparent);
+    }
+    .placard .kicker {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--accent); margin: 0;
+    }
+    .placard h2 {
+      font-family: var(--display); font-size: clamp(1.55rem, 2.8vw, 2.1rem);
+      margin: 0; line-height: 1.15; letter-spacing: -0.015em;
+    }
+    .placard p { margin: 0; color: var(--mute); max-width: 38ch; }
+    .diagram {
+      border: 1px solid var(--line); border-radius: 10px; padding: 0.75rem;
+      background: rgba(16,8,12,0.45);
+    }
+    .diagram figcaption {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--mute); margin-top: 0.45rem;
+    }
+    .try {
+      border: 1px solid var(--line); border-radius: 10px; padding: 0.85rem 1rem;
+      background: var(--try);
+    }
+    .try strong {
+      display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 0.35rem; font-weight: 500;
+    }
+    .try p { margin: 0; color: var(--ink); font-size: 15px; }
+    .ctrls { display: grid; gap: 0.85rem; }
+    .ctrl {
+      display: grid; grid-template-columns: 8.5rem 1fr 3.2rem; align-items: center; gap: 0.65rem;
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--mute);
+    }
+    .ctrl output { text-align: right; color: var(--accent); font-variant-numeric: tabular-nums; }
+    .ctrl input[type="range"] {
+      -webkit-appearance: none; appearance: none; width: 100%; height: 28px;
+      background: transparent; margin: 0; cursor: pointer;
+    }
+    .ctrl input[type="range"]::-webkit-slider-runnable-track {
+      height: 4px; background: rgba(255,59,92,0.28); border-radius: 999px;
+    }
+    .ctrl input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+      background: var(--accent); margin-top: -7px; border: 2px solid #10080c;
+    }
+    .ctrl input[type="range"]::-moz-range-track {
+      height: 4px; background: rgba(255,59,92,0.28); border-radius: 999px; border: none;
+    }
+    .ctrl input[type="range"]::-moz-range-thumb {
+      width: 18px; height: 18px; border-radius: 50%; background: var(--accent);
+      border: 2px solid #10080c;
+    }
+    .real-world {
+      display: grid; grid-template-columns: 0.7fr 1.3fr; gap: 2rem;
+      padding: clamp(2rem, 4vw, 3.5rem) clamp(1.25rem, 4vw, 3rem);
+      border-top: 1px solid var(--line);
+    }
+    .real-world h2 {
+      font-family: var(--display); font-size: clamp(1.6rem, 3vw, 2.2rem); margin: 0 0 0.5rem;
+    }
+    .real-world .lede { color: var(--mute); max-width: 34ch; margin: 0; font-size: 15.5px; }
+    .real-world-kicker {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--accent); margin: 0 0 0.5rem;
+    }
+    .real-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.25rem; }
+    .real-list > li {
+      display: grid; grid-template-columns: 2.5rem minmax(0, 1fr); gap: 0.85rem;
+      border-top: 1px solid var(--line); padding-top: 1rem;
+    }
+    .real-list .n {
+      font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing: 0.06em;
+    }
+    .real-list h3 {
+      font-family: var(--display); font-size: 1.05rem; margin: 0 0 0.2rem; font-weight: 600;
+    }
+    .real-list .job {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--accent); margin: 0 0 0.4rem;
+    }
+    .real-list p { margin: 0; color: var(--mute); font-size: 15px; }
+    .teachers {
+      display: grid; grid-template-columns: 0.7fr 1.3fr; gap: 2rem;
+      padding: clamp(2rem, 4vw, 3.5rem) clamp(1.25rem, 4vw, 3rem);
+      border-top: 1px solid var(--line);
+    }
+    .teachers h2 { font-family: var(--display); font-size: clamp(1.5rem, 2.8vw, 2rem); margin: 0 0 0.5rem; }
+    .teachers .lede { color: var(--mute); max-width: 34ch; margin: 0; }
+    .teach-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .teach-card {
+      border: 1px solid var(--line); border-radius: 12px; padding: 1rem 1.1rem;
+      background: rgba(26,14,20,0.55);
+    }
+    .teach-card h3 {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent); margin: 0 0 0.55rem; font-weight: 500;
+    }
+    .teach-card ul { margin: 0; padding-left: 1.1rem; color: var(--mute); font-size: 14.5px; }
+    .teach-card p { margin: 0; color: var(--mute); font-size: 14.5px; }
+    footer {
+      display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+      padding: 1.5rem clamp(1.25rem, 4vw, 3rem) 2.5rem; border-top: 1px solid var(--line);
+      font-family: var(--mono); font-size: 11px; color: var(--mute); letter-spacing: 0.04em;
+    }
+    footer a { color: var(--accent); }
+    @media (pointer: coarse), (hover: none) {
+      .ctrl { min-height: 44px; }
+      .ctrl input[type="range"] { height: 44px; min-height: 44px; margin: 0; padding: 0; }
+    }
+    @media (max-width: 700px) {
+      .ctrl input[type="range"] { height: 44px; min-height: 44px; }
+    }
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 2rem; }
+      .specimen, .teachers, .real-world { grid-template-columns: 1fr; }
+      .placard { border-left: none; border-top: 1px solid var(--line); }
+      .view, .view-wrap { min-height: 42vh; }
+      .specimen { min-height: auto; }
+      .real-world { gap: 1.5rem; }
+      .real-list > li { grid-template-columns: 2rem minmax(0, 1fr); }
+      .series-nav { position: relative; top: auto; right: auto; max-width: none; justify-content: flex-start; padding: 0.75rem 1.25rem; }
+      .glossary { grid-template-columns: 1fr 1fr; }
+      .teach-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-height: 480px) and (orientation: landscape) {
+      .hero { min-height: auto; padding-top: 1rem; padding-bottom: 0.75rem; }
+      .hero-lede, .hero-meta { display: none; }
+      .hero-stage, .hero-stage .view[data-scene="hero"] { min-height: 36vh; }
+      .view, .view-wrap { min-height: 62vh; }
+      .specimen { min-height: auto; }
+      .placard .lede { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .chip, .series-nav a { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div id="err" role="alert"></div>
+  <div class="content" id="top">
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track">
+        <span>CLEARCOAT</span><span>·</span><span>LACQUER</span><span>·</span><span>CAR PAINT</span><span>·</span>
+        <span>BASE + COAT</span><span>·</span><span>GLOSS</span><span>·</span><span>NAIL POLISH</span><span>·</span>
+        <span>VARNISH</span><span>·</span><span>DUAL HIGHLIGHT</span><span>·</span>
+        <span>CLEARCOAT</span><span>·</span><span>LACQUER</span><span>·</span><span>CAR PAINT</span><span>·</span>
+        <span>BASE + COAT</span><span>·</span><span>GLOSS</span><span>·</span><span>NAIL POLISH</span><span>·</span>
+        <span>VARNISH</span><span>·</span><span>DUAL HIGHLIGHT</span>
+      </div>
+    </div>
+    <nav class="series-nav" aria-label="Series lessons">
+      <a href="https://how-surfaces-work-production.up.railway.app/">Lesson 01 · Surfaces</a>
+      <a href="https://how-textures-work-production.up.railway.app/">Lesson 02 · Textures</a>
+      <a href="https://how-surfaces-work-production.up.railway.app/sheen/">Lesson 03 · Soft</a>
+      <a href="https://how-textures-work-preview-production.up.railway.app/wear/">Lesson 04 · Wear</a>
+      <a href="https://how-surfaces-work-l05-preview-production.up.railway.app/fresnel/">Lesson 05 · Edges</a>
+      <a href="https://how-textures-work-l06-preview-production.up.railway.app/grain/">Lesson 06 · Grain</a>
+      <a href="https://how-surfaces-work-l07-preview-production.up.railway.app/refract/">Lesson 07 · Glass</a>
+      <a href="https://how-textures-work-l08-preview-production.up.railway.app/uv/">Lesson 08 · UV</a>
+      <a href="https://how-surfaces-work-l09-preview-production.up.railway.app/scatter/">Lesson 09 · Scatter</a>
+      <a href="https://how-textures-work-l10-preview-production.up.railway.app/mips/">Lesson 10 · Mips</a>
+      <a href="https://how-surfaces-work-l11-preview-production.up.railway.app/aniso/">Lesson 11 · Aniso</a>
+    </nav>
+
+    <header class="hero">
+      <div>
+        <p class="hero-kicker">● Lesson 12 · Materials</p>
+        <h1>How Clear Coats <em>Stack</em></h1>
+        <p class="hero-lede">Many real finishes are two layers: a colored base and a clear glossy coat on top. The coat adds a sharp mirror highlight of its own.</p>
+        <div class="hero-meta">
+          <div><b>Time</b> 18 min</div>
+          <div><b>You will learn</b> Clearcoat · coat roughness · dual highlights</div>
+          <div><b>Try first</b> Raise Clearcoat on Specimen 01</div>
+          <div><b>Core lesson</b> A smooth clear layer sits over a softer base</div>
+        </div>
+        <p class="scroll-cue"><a href="#s01">Enter the lab ↓</a></p>
+      </div>
+      <div class="hero-stage">
+        <div class="view" data-scene="hero" tabindex="0" aria-label="Lacquered car-paint sphere. Drag to move the reveal lens."></div>
+      </div>
+    </header>
+
+    <section class="glossary" aria-label="What you will see">
+      <h2>What you will see</h2>
+      <div><b>Clearcoat</b><span>How strong the top lacquer layer is. Zero shows only the matte base.</span></div>
+      <div><b>Coat roughness</b><span>How soft the top highlight is. Low values make a sharp white sparkle.</span></div>
+      <div><b>Dual highlights</b><span>A soft colored base reflection plus a sharper coat reflection.</span></div>
+      <div><b>Base type</b><span>Metallic flake bases and dielectric paints both take a clear coat differently.</span></div>
+    </section>
+
+    <section class="specimen" id="s01">
+      <div class="view-wrap">
+        <div class="view-label">Car paint · coat</div>
+        <div class="view" data-scene="coat" tabindex="0" aria-label="Car-paint sphere. Use clearcoat and coat roughness sliders."></div>
+      </div>
+      <aside class="placard">
+        <p class="kicker">Specimen 01 — Clearcoat strength</p>
+        <h2>Add a sharp top highlight</h2>
+        <p class="lede">Lesson 01 showed clearcoat on a red knot briefly. Here you dial how strong the lacquer is and how soft its highlight looks.</p>
+        <figure class="diagram" aria-hidden="true">
+          <svg viewBox="0 0 320 100" width="100%" height="100" xmlns="http://www.w3.org/2000/svg">
+            <rect x="40" y="48" width="240" height="28" rx="4" fill="#7a1024" stroke="#ff3b5c" stroke-width="1.2" />
+            <text x="50" y="67" fill="rgba(255,242,245,0.7)" font-size="10" font-family="JetBrains Mono, monospace">BASE PAINT</text>
+            <rect x="40" y="28" width="240" height="20" rx="3" fill="rgba(255,255,255,0.12)" stroke="#ff3b5c" stroke-width="1.2" />
+            <text x="50" y="42" fill="rgba(255,242,245,0.7)" font-size="10" font-family="JetBrains Mono, monospace">CLEAR COAT</text>
+            <ellipse cx="200" cy="36" rx="28" ry="6" fill="#fff" opacity="0.85" />
+            <text x="40" y="92" fill="rgba(255,242,245,0.45)" font-size="9" font-family="JetBrains Mono, monospace">SHARP COAT HIGHLIGHT ON TOP</text>
+          </svg>
+          <figcaption>Base layer · clear coat · top sparkle</figcaption>
+        </figure>
+        <div class="try"><strong>Try this</strong><p>Raise Clearcoat from 0 toward 1. Then lower Coat roughness so the top sparkle gets sharper.</p></div>
+        <div class="ctrls">
+          <label class="ctrl">Clearcoat
+            <input id="coat-amt" type="range" min="0" max="1" step="0.01" value="1" />
+            <output id="coat-amt-out" for="coat-amt">1.00</output>
+          </label>
+          <label class="ctrl">Coat roughness
+            <input id="coat-rough" type="range" min="0" max="1" step="0.01" value="0.08" />
+            <output id="coat-rough-out" for="coat-rough">0.08</output>
+          </label>
+          <label class="ctrl">Base roughness
+            <input id="base-rough" type="range" min="0.1" max="0.85" step="0.01" value="0.42" />
+            <output id="base-rough-out" for="base-rough">0.42</output>
+          </label>
+        </div>
+      </aside>
+    </section>
+
+    <section class="specimen" id="s02">
+      <div class="view-wrap">
+        <div class="view-label">Matte · vs lacquer</div>
+        <div class="view" data-scene="compare" tabindex="0" aria-label="Matte base next to the same base with clearcoat."></div>
+      </div>
+      <aside class="placard">
+        <p class="kicker">Specimen 02 — Same base, two finishes</p>
+        <h2>Matte beside lacquer</h2>
+        <p class="lede">Both spheres share the same base color and base roughness. Only the right sphere has a clear coat. The difference is the sharp top highlight.</p>
+        <div class="try"><strong>Try this</strong><p>Raise Compare coat on the lacquer sphere. Watch a white sparkle appear while the matte sphere stays soft.</p></div>
+        <div class="ctrls">
+          <label class="ctrl">Compare coat
+            <input id="cmp-coat" type="range" min="0" max="1" step="0.01" value="1" />
+            <output id="cmp-coat-out" for="cmp-coat">1.00</output>
+          </label>
+          <label class="ctrl">Shared light
+            <input id="cmp-orbit" type="range" min="0" max="360" step="1" value="45" />
+            <output id="cmp-orbit-out" for="cmp-orbit">45°</output>
+          </label>
+        </div>
+      </aside>
+    </section>
+
+    <section class="specimen" id="s03">
+      <div class="view-wrap">
+        <div class="view-label">Metal · vs dielectric</div>
+        <div class="view" data-scene="bases" tabindex="0" aria-label="Metallic flake base and dielectric base under clearcoat."></div>
+      </div>
+      <aside class="placard">
+        <p class="kicker">Specimen 03 — Base type under coat</p>
+        <h2>Flake metal beside solid color</h2>
+        <p class="lede">A metallic base keeps colored specular under the lacquer. A dielectric base keeps a softer colored diffuse look. Both wear the same clear coat on top.</p>
+        <div class="try"><strong>Try this</strong><p>Raise Coat on both. Then nudge Coat roughness and compare how the sparkle sits over each base.</p></div>
+        <div class="ctrls">
+          <label class="ctrl">Coat
+            <input id="bases-coat" type="range" min="0" max="1" step="0.01" value="1" />
+            <output id="bases-coat-out" for="bases-coat">1.00</output>
+          </label>
+          <label class="ctrl">Coat roughness
+            <input id="bases-rough" type="range" min="0" max="0.6" step="0.01" value="0.06" />
+            <output id="bases-rough-out" for="bases-rough">0.06</output>
+          </label>
+        </div>
+      </aside>
+    </section>
+
+    <section class="real-world" id="real-world" aria-labelledby="real-world-title">
+      <div>
+        <p class="real-world-kicker">After the lab</p>
+        <h2 id="real-world-title">Where you see this</h2>
+        <p class="lede">Clearcoat is everyday craft for people who light car paint, gloss packaging, and lacquered props.</p>
+      </div>
+      <ol class="real-list">
+        <li>
+          <span class="n" aria-hidden="true">01</span>
+          <div>
+            <h3>Production car paint (base + clear)</h3>
+            <p class="job">Automotive CGI artist</p>
+            <p>Automotive CGI artists build production car paint as a colored base plus a clear lacquer. The coat carries the sharp showroom sparkle while the base holds the body color.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">02</span>
+          <div>
+            <h3>Glossy devices and cosmetics packaging</h3>
+            <p class="job">3D product visualization artist</p>
+            <p>Product visualization artists use clearcoat on glossy phones, lipstick cases, and varnish-like packaging so studio lights make a crisp top highlight over the printed color.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">03</span>
+          <div>
+            <h3>Soft-touch vs lacquer samples</h3>
+            <p class="job">CMF designer</p>
+            <p>CMF designers compare soft-touch and lacquer samples under the same lamp. Lacquer keeps a sharper coat highlight; soft-touch keeps a softer, more diffuse finish.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">04</span>
+          <div>
+            <h3>Props with varnish and lacquer</h3>
+            <p class="job">Look-development artist</p>
+            <p>Look-dev artists dial clearcoat on furniture props, instruments, and lacquered wood so varnish reads as a thin glossy layer instead of a flat shiny color.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">05</span>
+          <div>
+            <h3>Polished resin and glossy furniture</h3>
+            <p class="job">Architectural visualization artist</p>
+            <p>Archviz artists use clearcoat on polished resin counters and glossy furniture so lobby lights sparkle on the coat while the base color stays underneath.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="teachers" id="teachers">
+      <div>
+        <h2>For teachers</h2>
+        <p class="lede">Short objectives, one classroom loop, and how clearcoat maps to studio and design practice.</p>
+      </div>
+      <div class="teach-grid">
+        <div class="teach-card">
+          <h3>Learning objectives</h3>
+          <ul>
+            <li>Explain that clearcoat is a glossy layer over a colored base.</li>
+            <li>Predict that lower coat roughness makes a sharper top highlight.</li>
+            <li>Contrast a matte base with the same base under lacquer.</li>
+            <li>Describe dual highlights: soft base plus sharp coat.</li>
+          </ul>
+        </div>
+        <div class="teach-card">
+          <h3>10-minute classroom activity</h3>
+          <p>1) Look at a glossy phone or nail polish under a desk lamp. 2) Open Specimen 01 and raise Clearcoat. 3) Lower Coat roughness until the sparkle matches. 4) On Specimen 02, write one sentence on what the matte sphere is missing.</p>
+        </div>
+        <div class="teach-card">
+          <h3>Art &amp; design map</h3>
+          <p>Automotive paint, product gloss, CMF lacquer reviews, prop varnish look-dev.</p>
+        </div>
+        <div class="teach-card">
+          <h3>Materials science map</h3>
+          <p>Multilayer coatings, topcoat roughness, dielectric vs metallic bases, specular layering.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div>How Clear Coats Stack · Lesson 12 · Materials · <a href="https://how-surfaces-work-production.up.railway.app/">Lesson 01</a> · <a href="https://how-surfaces-work-l11-preview-production.up.railway.app/aniso/">Lesson 11</a></div>
+      <div><a href="#top">Back to top</a></div>
+    </footer>
+  </div>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
