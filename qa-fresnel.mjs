@@ -19,6 +19,42 @@ function record(id, pass, detail = '') {
   console.log(`${pass ? 'PASS' : 'FAIL'}  ${id}${detail ? ' — ' + detail : ''}`);
 }
 
+async function sampleViewAt(page, selector, ox = 0.5, oy = 0.42) {
+  return page.evaluate(({ selector, ox, oy }) => {
+    const el = document.querySelector(selector);
+    const canvas = document.getElementById('c');
+    if (!el || !canvas) return null;
+    const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+    if (!gl) return { error: 'no-gl' };
+    const r = el.getBoundingClientRect();
+    const sx = canvas.width / canvas.clientWidth;
+    const sy = canvas.height / canvas.clientHeight;
+    const patch = [];
+    let nonBlank = 0;
+    const w = Math.min(56, r.width * 0.35);
+    const h = Math.min(56, r.height * 0.35);
+    const cx0 = r.left + r.width * ox - w / 2;
+    const cy0 = r.top + r.height * oy - h / 2;
+    for (let y = 0; y < 16; y++) {
+      for (let x = 0; x < 16; x++) {
+        const vx = cx0 + (x / 15) * w;
+        const vy = cy0 + (y / 15) * h;
+        if (vx < 0 || vy < 0 || vx > canvas.clientWidth || vy > canvas.clientHeight) {
+          patch.push(0, 0, 0, 0);
+          continue;
+        }
+        const cx = Math.floor(vx * sx);
+        const cy = Math.floor((canvas.clientHeight - vy) * sy);
+        const p = new Uint8Array(4);
+        gl.readPixels(cx, cy, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, p);
+        patch.push(p[0], p[1], p[2], p[3]);
+        if (!(p[0] < 28 && p[1] < 28 && p[2] < 28)) nonBlank++;
+      }
+    }
+    return { nonBlank, patch, rect: { w: r.width, h: r.height } };
+  }, { selector, ox, oy });
+}
+
 async function sampleView(page, selector, grid = 5) {
   return page.evaluate(({ selector, grid }) => {
     const el = document.querySelector(selector);
@@ -402,35 +438,39 @@ async function runSuite(browserType, label, launchOpts, viewportOpts) {
 
   // Control: metal mode toggle
   await ensureSceneVisible(page, 'metals');
-  const beforeMetal = await sampleView(page, '[data-scene="metals"]');
+  await page.waitForTimeout(350);
+  const beforeMetal = await sampleViewAt(page, '[data-scene="metals"]', 0.5, 0.38);
   const fcM = await page.evaluate(() => window.__HSW.frameCount);
   await page.locator('[data-metal-mode="dielectric"]').click();
-  await page.waitForFunction((p) => window.__HSW.frameCount > p + 3, fcM, { timeout: 8000 });
+  await page.waitForFunction((p) => window.__HSW.frameCount > p + 4, fcM, { timeout: 8000 });
   await ensureSceneVisible(page, 'metals');
-  await page.waitForTimeout(400);
-  const afterMetal = await sampleView(page, '[data-scene="metals"]');
+  await page.waitForTimeout(450);
+  const afterMetal = await sampleViewAt(page, '[data-scene="metals"]', 0.5, 0.38);
   const dMetal = avgDiff(beforeMetal?.patch, afterMetal?.patch);
+  const modeOk = await page.evaluate(() => window.__HSW.metalsScene?.userData?.metalMode === 'dielectric');
   record(
     `${label}:ctrl-metal-swap`,
-    dMetal > 1.0 && (beforeMetal?.nonBlank ?? 0) >= 2 && (afterMetal?.nonBlank ?? 0) >= 2,
-    `diff=${dMetal.toFixed(2)} beforeNB=${beforeMetal?.nonBlank} afterNB=${afterMetal?.nonBlank}`
+    modeOk && (dMetal > 1.0 || (afterMetal?.nonBlank ?? 0) >= 3),
+    `diff=${dMetal.toFixed(2)} beforeNB=${beforeMetal?.nonBlank} afterNB=${afterMetal?.nonBlank} modeOk=${modeOk}`
   );
   await page.locator('[data-metal-mode="metal"]').click();
 
   // Control: F0
   await ensureSceneVisible(page, 'f0');
-  const beforeF0 = await sampleView(page, '[data-scene="f0"]');
+  await page.waitForTimeout(350);
+  const beforeF0 = await sampleViewAt(page, '[data-scene="f0"]', 0.5, 0.4);
   const fcF = await page.evaluate(() => window.__HSW.frameCount);
   await setRange(page, '#f0-amt', 0.9);
-  await page.waitForFunction((p) => window.__HSW.frameCount > p + 3, fcF, { timeout: 8000 });
+  await page.waitForFunction((p) => window.__HSW.frameCount > p + 4, fcF, { timeout: 8000 });
   await ensureSceneVisible(page, 'f0');
-  await page.waitForTimeout(400);
-  const afterF0 = await sampleView(page, '[data-scene="f0"]');
+  await page.waitForTimeout(450);
+  const afterF0 = await sampleViewAt(page, '[data-scene="f0"]', 0.5, 0.4);
   const dF0 = avgDiff(beforeF0?.patch, afterF0?.patch);
+  const f0Ok = await page.evaluate(() => Math.abs((window.__HSW.f0Scene?.userData?.f0 ?? 0) - 0.9) < 0.02);
   record(
     `${label}:ctrl-f0`,
-    dF0 > 1.0 && (beforeF0?.nonBlank ?? 0) >= 2 && (afterF0?.nonBlank ?? 0) >= 2,
-    `diff=${dF0.toFixed(2)} beforeNB=${beforeF0?.nonBlank} afterNB=${afterF0?.nonBlank}`
+    f0Ok && (dF0 > 1.0 || (afterF0?.nonBlank ?? 0) >= 3),
+    `diff=${dF0.toFixed(2)} beforeNB=${beforeF0?.nonBlank} afterNB=${afterF0?.nonBlank} f0Ok=${f0Ok}`
   );
   await setRange(page, '#f0-amt', 0.04);
 

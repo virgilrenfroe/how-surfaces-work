@@ -459,11 +459,11 @@ const metalsScene = makeScene(document.querySelector('[data-scene="metals"]'), {
         mat.envMapIntensity = b.metal ? 1.4 : 0.7;
         mat.roughness = b.rough;
       } else {
-        // force all non-glass to dielectric while keeping base hue
+        // Force non-glass to dielectric: keep hue, kill mirror tint, raise roughness
         mat.metalness = 0;
         mat.color.set(b.color);
-        mat.envMapIntensity = 0.65;
-        mat.roughness = Math.max(0.25, b.rough);
+        mat.envMapIntensity = 0.35;
+        mat.roughness = b.metal ? 0.72 : Math.max(0.35, b.rough);
       }
     }
   }
