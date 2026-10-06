@@ -336,7 +336,7 @@ async function runSuite(browserType, label, launchOpts, viewportOpts) {
 
   const boxes = await page.evaluate(() => {
     const pick = {
-      glossary: '.hero-gloss', seriesPill: '.series-nav a',
+      glossary: '.glossary', seriesPill: '.series-nav a',
       enterLink: '.scroll-cue a[href="#s01"]', heroBox: '[data-scene="hero"]', firstSpecimen: '#s01 .view',
     };
     const out = {};
