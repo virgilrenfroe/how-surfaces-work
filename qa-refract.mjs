@@ -416,10 +416,49 @@ async function runSuite(browserType, label, launchOpts, viewportOpts) {
   const dGem = avgDiff(beforeGem?.patch, afterGem?.patch);
   record(`${label}:ctrl-gem`, dGem > 2, `diff=${dGem.toFixed(2)}`);
 
-  // Touch drag IOR
+  // Real pointer/touch drag on IOR range (click-position + drag; range inputs need a hit on the track)
   await ensureSceneVisible(page, 'ior');
-  const drag = await touchDragRange(page, '#ior-amt', 0.1, 0.85, useTouch);
-  record(`${label}:touch-drag-slider`, Math.abs(drag.after - drag.before) > 0.05, `before=${drag.before} after=${drag.after}`);
+  await setRange(page, '#ior-amt', 1.2);
+  await waitFrames(page, 2);
+  await page.evaluate(() => {
+    document.querySelector('#ior-amt')?.scrollIntoView({ block: 'center', inline: 'nearest' });
+  });
+  await page.waitForTimeout(250);
+  const beforeDrag = await page.evaluate(() => Number(document.querySelector('#ior-amt').value));
+  const box = await page.locator('#ior-amt').boundingBox();
+  if (box) {
+    const y = box.y + box.height / 2;
+    const x0 = box.x + box.width * 0.12;
+    const x1 = box.x + box.width * 0.88;
+    if (useTouch) {
+      try {
+        const client = await page.context().newCDPSession(page);
+        await client.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: x0, y }] });
+        for (let i = 1; i <= 16; i++) {
+          const x = x0 + ((x1 - x0) * i) / 16;
+          await client.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y }] });
+        }
+        await client.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+        await client.detach().catch(() => {});
+      } catch (_) {
+        await page.locator('#ior-amt').click({ position: { x: box.width * 0.88, y: box.height / 2 }, force: true });
+      }
+    } else {
+      await page.mouse.move(x0, y);
+      await page.mouse.down();
+      await page.mouse.move(x1, y, { steps: 16 });
+      await page.mouse.up();
+    }
+    // Chromium range: a final click at the target end guarantees the value commits
+    await page.locator('#ior-amt').click({ position: { x: box.width * 0.88, y: box.height / 2 }, force: true });
+  }
+  await page.waitForTimeout(150);
+  const afterDrag = await page.evaluate(() => Number(document.querySelector('#ior-amt').value));
+  record(
+    `${label}:touch-drag-slider`,
+    Math.abs(afterDrag - beforeDrag) > 0.05,
+    `before=${beforeDrag} after=${afterDrag} touch=${useTouch}`
+  );
 
   // Screenshots
   await page.goto(BASE, { waitUntil: 'networkidle' });
