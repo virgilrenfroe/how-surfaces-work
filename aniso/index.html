@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="How Brushed Metal Streaks — Lesson 11 · Materials. Anisotropy stretches highlights on brushed metal, satin, and fibers." />
+  <title>How Brushed Metal Streaks · Lesson 11 · Materials</title>
+  <meta property="og:title" content="How Brushed Metal Streaks · Lesson 11 · Materials" />
+  <meta property="og:description" content="Lesson 11 · Materials. See how brush grooves stretch a round highlight into a streak." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="How Brushed Metal Streaks · Lesson 11 · Materials" />
+  <meta name="twitter:description" content="Lesson 11 · Materials. See how brush grooves stretch a round highlight into a streak." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #080a10;
+      --ink: #f2f5ff;
+      --mute: rgba(242,245,255,0.62);
+      --line: rgba(158,183,255,0.18);
+      --accent: #9eb7ff;
+      --accent-2: #c4d2ff;
+      --card: #0e121c;
+      --try: rgba(158,183,255,0.08);
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --display: "Space Grotesk", sans-serif;
+      --body: "Gabarito", sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    body {
+      margin: 0; background: var(--bg); color: var(--ink);
+      font-family: var(--body); font-size: 16.5px; line-height: 1.55;
+      overflow-x: hidden; -webkit-text-size-adjust: 100%;
+    }
+    canvas#c {
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      display: block; z-index: 0; pointer-events: none;
+    }
+    #err {
+      display: none; position: fixed; left: 1rem; right: 1rem; bottom: 1rem;
+      z-index: 50; background: #2a1520; color: #ffd6e0; padding: 0.85rem 1rem;
+      border-radius: 10px; font-size: 14px;
+    }
+    .content { position: relative; z-index: 1; pointer-events: none; }
+    .content a, .content button, .content input, .content .chip,
+    .content .view, .content .ctrl { pointer-events: auto; }
+    .ticker {
+      overflow: hidden; border-bottom: 1px solid var(--line);
+      background: rgba(8,10,16,0.85); backdrop-filter: blur(8px);
+    }
+    .ticker-track {
+      display: flex; gap: 1.25rem; white-space: nowrap; padding: 0.55rem 0;
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--accent); animation: ticker 42s linear infinite;
+    }
+    .ticker-track span { opacity: 0.85; }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
+    .series-nav {
+      position: absolute; top: 2.6rem; right: 1rem; z-index: 5;
+      display: flex; flex-wrap: wrap; gap: 0.35rem; max-width: min(42rem, 58vw);
+      justify-content: flex-end;
+    }
+    .series-nav a {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.04em;
+      text-transform: uppercase; text-decoration: none; color: var(--mute);
+      border: 1px solid var(--line); border-radius: 999px; padding: 0.35rem 0.55rem;
+      background: rgba(8,10,16,0.7);
+    }
+    .series-nav a:hover { color: var(--accent); border-color: var(--accent); }
+    .hero {
+      display: grid; grid-template-columns: 1.05fr 1fr; align-items: center;
+      gap: 0; min-height: 88vh; padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 4vw, 3rem) 2rem;
+      position: relative;
+    }
+    .hero-kicker {
+      font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--accent); margin: 0 0 0.75rem;
+    }
+    .hero h1 {
+      font-family: var(--display); font-weight: 600; font-size: clamp(2.4rem, 5.5vw, 4.1rem);
+      line-height: 1.05; margin: 0 0 1rem; letter-spacing: -0.02em;
+    }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero-lede { color: var(--mute); max-width: 36ch; margin: 0 0 1.25rem; font-size: 17px; }
+    .hero-meta {
+      display: grid; gap: 0.35rem; font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--mute); margin-bottom: 1.25rem;
+    }
+    .hero-meta b { color: var(--accent); font-weight: 500; }
+    .scroll-cue a {
+      color: var(--accent); font-family: var(--mono); font-size: 12px;
+      letter-spacing: 0.08em; text-transform: uppercase; text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+    .hero-stage { position: relative; min-height: 52vh; }
+    .hero-stage .view[data-scene="hero"] { width: 100%; height: 100%; min-height: 52vh; touch-action: none; }
+    .glossary {
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem;
+      padding: 1.25rem clamp(1.25rem, 4vw, 3rem) 2rem; border-top: 1px solid var(--line);
+    }
+    .glossary h2 {
+      grid-column: 1 / -1; font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--accent); font-weight: 500; margin: 0 0 0.25rem;
+    }
+    .glossary div b {
+      display: block; font-family: var(--display); font-size: 14px; margin-bottom: 0.25rem;
+    }
+    .glossary div span { color: var(--mute); font-size: 14.5px; }
+    .specimen {
+      display: grid; grid-template-columns: 1.15fr 0.85fr;
+      gap: 0; min-height: 78vh; border-top: 1px solid var(--line); position: relative;
+    }
+    .view-wrap { position: relative; min-height: 52vh; background: transparent; }
+    .view { width: 100%; height: 100%; min-height: 52vh; position: relative; touch-action: none; }
+    .view-label {
+      position: absolute; top: 0.85rem; left: 0.85rem; z-index: 2;
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); background: rgba(8,10,16,0.75); border: 1px solid var(--line);
+      border-radius: 999px; padding: 0.4rem 0.7rem;
+    }
+    .placard {
+      padding: clamp(1.5rem, 3vw, 2.5rem); border-left: 1px solid var(--line);
+      display: flex; flex-direction: column; gap: 1rem; background: linear-gradient(180deg, rgba(14,18,28,0.55), transparent);
+    }
+    .placard .kicker {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--accent); margin: 0;
+    }
+    .placard h2 {
+      font-family: var(--display); font-size: clamp(1.55rem, 2.8vw, 2.1rem);
+      margin: 0; line-height: 1.15; letter-spacing: -0.015em;
+    }
+    .placard p { margin: 0; color: var(--mute); max-width: 38ch; }
+    .diagram {
+      border: 1px solid var(--line); border-radius: 10px; padding: 0.75rem;
+      background: rgba(8,10,16,0.45);
+    }
+    .diagram figcaption {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--mute); margin-top: 0.45rem;
+    }
+    .try {
+      border: 1px solid var(--line); border-radius: 10px; padding: 0.85rem 1rem;
+      background: var(--try);
+    }
+    .try strong {
+      display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 0.35rem; font-weight: 500;
+    }
+    .try p { margin: 0; color: var(--ink); font-size: 15px; }
+    .ctrls { display: grid; gap: 0.85rem; }
+    .ctrl {
+      display: grid; grid-template-columns: 7.5rem 1fr 3.2rem; align-items: center; gap: 0.65rem;
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--mute);
+    }
+    .ctrl output { text-align: right; color: var(--accent); font-variant-numeric: tabular-nums; }
+    .ctrl input[type="range"] {
+      -webkit-appearance: none; appearance: none; width: 100%; height: 28px;
+      background: transparent; margin: 0; cursor: pointer;
+    }
+    .ctrl input[type="range"]::-webkit-slider-runnable-track {
+      height: 4px; background: rgba(158,183,255,0.25); border-radius: 999px;
+    }
+    .ctrl input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+      background: var(--accent); margin-top: -7px; border: 2px solid #080a10;
+    }
+    .ctrl input[type="range"]::-moz-range-track {
+      height: 4px; background: rgba(158,183,255,0.25); border-radius: 999px; border: none;
+    }
+    .ctrl input[type="range"]::-moz-range-thumb {
+      width: 18px; height: 18px; border-radius: 50%; background: var(--accent);
+      border: 2px solid #080a10;
+    }
+    .real-world {
+      display: grid; grid-template-columns: 0.7fr 1.3fr; gap: 2rem;
+      padding: clamp(2rem, 4vw, 3.5rem) clamp(1.25rem, 4vw, 3rem);
+      border-top: 1px solid var(--line);
+    }
+    .real-world h2 {
+      font-family: var(--display); font-size: clamp(1.6rem, 3vw, 2.2rem); margin: 0 0 0.5rem;
+    }
+    .real-world .lede { color: var(--mute); max-width: 34ch; margin: 0; font-size: 15.5px; }
+    .real-world-kicker {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--accent); margin: 0 0 0.5rem;
+    }
+    .real-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.25rem; }
+    .real-list > li {
+      display: grid; grid-template-columns: 2.5rem minmax(0, 1fr); gap: 0.85rem;
+      border-top: 1px solid var(--line); padding-top: 1rem;
+    }
+    .real-list .n {
+      font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing: 0.06em;
+    }
+    .real-list h3 {
+      font-family: var(--display); font-size: 1.05rem; margin: 0 0 0.2rem; font-weight: 600;
+    }
+    .real-list .job {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--accent); margin: 0 0 0.4rem;
+    }
+    .real-list p { margin: 0; color: var(--mute); font-size: 15px; }
+    .teachers {
+      display: grid; grid-template-columns: 0.7fr 1.3fr; gap: 2rem;
+      padding: clamp(2rem, 4vw, 3.5rem) clamp(1.25rem, 4vw, 3rem);
+      border-top: 1px solid var(--line);
+    }
+    .teachers h2 { font-family: var(--display); font-size: clamp(1.5rem, 2.8vw, 2rem); margin: 0 0 0.5rem; }
+    .teachers .lede { color: var(--mute); max-width: 34ch; margin: 0; }
+    .teach-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .teach-card {
+      border: 1px solid var(--line); border-radius: 12px; padding: 1rem 1.1rem;
+      background: rgba(14,18,28,0.55);
+    }
+    .teach-card h3 {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent); margin: 0 0 0.55rem; font-weight: 500;
+    }
+    .teach-card ul { margin: 0; padding-left: 1.1rem; color: var(--mute); font-size: 14.5px; }
+    .teach-card p { margin: 0; color: var(--mute); font-size: 14.5px; }
+    footer {
+      display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+      padding: 1.5rem clamp(1.25rem, 4vw, 3rem) 2.5rem; border-top: 1px solid var(--line);
+      font-family: var(--mono); font-size: 11px; color: var(--mute); letter-spacing: 0.04em;
+    }
+    footer a { color: var(--accent); }
+    @media (pointer: coarse), (hover: none) {
+      .ctrl { min-height: 44px; }
+      .ctrl input[type="range"] { height: 44px; min-height: 44px; margin: 0; padding: 0; }
+    }
+    @media (max-width: 700px) {
+      .ctrl input[type="range"] { height: 44px; min-height: 44px; }
+    }
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 2rem; }
+      .specimen, .teachers, .real-world { grid-template-columns: 1fr; }
+      .placard { border-left: none; border-top: 1px solid var(--line); }
+      .view, .view-wrap { min-height: 42vh; }
+      .specimen { min-height: auto; }
+      .real-world { gap: 1.5rem; }
+      .real-list > li { grid-template-columns: 2rem minmax(0, 1fr); }
+      .series-nav { position: relative; top: auto; right: auto; max-width: none; justify-content: flex-start; padding: 0.75rem 1.25rem; }
+      .glossary { grid-template-columns: 1fr 1fr; }
+      .teach-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-height: 480px) and (orientation: landscape) {
+      .hero { min-height: auto; padding-top: 1rem; padding-bottom: 0.75rem; }
+      .hero-lede, .hero-meta { display: none; }
+      .hero-stage, .hero-stage .view[data-scene="hero"] { min-height: 36vh; }
+      .view, .view-wrap { min-height: 62vh; }
+      .specimen { min-height: auto; }
+      .placard .lede { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .chip, .series-nav a { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div id="err" role="alert"></div>
+  <div class="content" id="top">
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track">
+        <span>ANISOTROPY</span><span>·</span><span>BRUSHED METAL</span><span>·</span><span>STREAK</span><span>·</span>
+        <span>SATIN</span><span>·</span><span>HAIR</span><span>·</span><span>GROOVES</span><span>·</span>
+        <span>HIGHLIGHT</span><span>·</span><span>FIBER</span><span>·</span><span>ROTATION</span><span>·</span>
+        <span>ANISOTROPY</span><span>·</span><span>BRUSHED METAL</span><span>·</span><span>STREAK</span><span>·</span>
+        <span>SATIN</span><span>·</span><span>HAIR</span><span>·</span><span>GROOVES</span><span>·</span>
+        <span>HIGHLIGHT</span><span>·</span><span>FIBER</span><span>·</span><span>ROTATION</span>
+      </div>
+    </div>
+    <nav class="series-nav" aria-label="Series lessons">
+      <a href="https://how-surfaces-work-production.up.railway.app/">Lesson 01 · Surfaces</a>
+      <a href="https://how-textures-work-production.up.railway.app/">Lesson 02 · Textures</a>
+      <a href="https://how-surfaces-work-production.up.railway.app/sheen/">Lesson 03 · Soft</a>
+      <a href="https://how-textures-work-preview-production.up.railway.app/wear/">Lesson 04 · Wear</a>
+      <a href="https://how-surfaces-work-l05-preview-production.up.railway.app/fresnel/">Lesson 05 · Edges</a>
+      <a href="https://how-textures-work-l06-preview-production.up.railway.app/grain/">Lesson 06 · Grain</a>
+      <a href="https://how-surfaces-work-l07-preview-production.up.railway.app/refract/">Lesson 07 · Glass</a>
+      <a href="https://how-textures-work-l08-preview-production.up.railway.app/uv/">Lesson 08 · UV</a>
+      <a href="https://how-surfaces-work-l09-preview-production.up.railway.app/scatter/">Lesson 09 · Scatter</a>
+      <a href="https://how-textures-work-l10-preview-production.up.railway.app/mips/">Lesson 10 · Mips</a>
+    </nav>
+
+    <header class="hero">
+      <div>
+        <p class="hero-kicker">● Lesson 11 · Materials</p>
+        <h1>How Brushed Metal <em>Streaks</em></h1>
+        <p class="hero-lede">Most shiny surfaces spray reflections in a round blob. Brushed metal and satin have tiny grooves that stretch that blob into a streak.</p>
+        <div class="hero-meta">
+          <div><b>Time</b> 18 min</div>
+          <div><b>You will learn</b> Anisotropy · brush angle · streak length</div>
+          <div><b>Try first</b> Raise Anisotropy on Specimen 01</div>
+          <div><b>Core lesson</b> Grooves stretch the highlight along one direction</div>
+        </div>
+        <p class="scroll-cue"><a href="#s01">Enter the lab ↓</a></p>
+      </div>
+      <div class="hero-stage">
+        <div class="view" data-scene="hero" tabindex="0" aria-label="Brushed metal disc with a streak highlight. Drag to move the reveal lens."></div>
+      </div>
+    </header>
+
+    <section class="glossary" aria-label="What you will see">
+      <h2>What you will see</h2>
+      <div><b>Anisotropy</b><span>How strongly grooves stretch a round highlight into a streak. Zero stays round.</span></div>
+      <div><b>Brush angle</b><span>The direction of the grooves. Turn it and the streak turns with it.</span></div>
+      <div><b>Isotropic</b><span>A smooth chrome sphere keeps a round blob under the same light.</span></div>
+      <div><b>Satin · hair</b><span>Cloth weave and fiber strands use the same directional stretch idea.</span></div>
+    </section>
+
+    <section class="specimen" id="s01">
+      <div class="view-wrap">
+        <div class="view-label">Brush · streak</div>
+        <div class="view" data-scene="brush" tabindex="0" aria-label="Brushed metal disc. Use anisotropy and rotation sliders."></div>
+      </div>
+      <aside class="placard">
+        <p class="kicker">Specimen 01 — Anisotropy strength</p>
+        <h2>Stretch the highlight into a line</h2>
+        <p class="lede">Lesson 01 showed a brushed knot briefly. Here you control how long the streak is and which way the grooves run.</p>
+        <figure class="diagram" aria-hidden="true">
+          <svg viewBox="0 0 320 90" width="100%" height="90" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="70" cy="45" r="28" fill="none" stroke="#9eb7ff" stroke-width="1.5" opacity="0.5" />
+            <ellipse cx="70" cy="45" rx="14" ry="14" fill="#9eb7ff" opacity="0.55" />
+            <text x="48" y="84" fill="rgba(242,245,255,0.45)" font-size="9" font-family="JetBrains Mono, monospace">ISOTROPIC</text>
+            <rect x="170" y="18" width="110" height="54" rx="6" fill="#121722" stroke="#9eb7ff" stroke-width="1.5" />
+            <ellipse cx="225" cy="45" rx="42" ry="8" fill="#9eb7ff" opacity="0.75" />
+            <text x="188" y="84" fill="rgba(242,245,255,0.45)" font-size="9" font-family="JetBrains Mono, monospace">ANISOTROPIC</text>
+          </svg>
+          <figcaption>Round blob vs stretched streak</figcaption>
+        </figure>
+        <div class="try"><strong>Try this</strong><p>Raise Anisotropy from 0 toward 1. Then turn Brush angle and watch the streak rotate.</p></div>
+        <div class="ctrls">
+          <label class="ctrl">Anisotropy
+            <input id="brush-aniso" type="range" min="0" max="1" step="0.01" value="0.85" />
+            <output id="brush-aniso-out" for="brush-aniso">0.85</output>
+          </label>
+          <label class="ctrl">Brush angle
+            <input id="brush-rot" type="range" min="0" max="180" step="1" value="35" />
+            <output id="brush-rot-out" for="brush-rot">35°</output>
+          </label>
+        </div>
+      </aside>
+    </section>
+
+    <section class="specimen" id="s02">
+      <div class="view-wrap">
+        <div class="view-label">Chrome · vs brush</div>
+        <div class="view" data-scene="compare" tabindex="0" aria-label="Isotropic chrome sphere next to anisotropic brushed disc."></div>
+      </div>
+      <aside class="placard">
+        <p class="kicker">Specimen 02 — Same light, two shapes</p>
+        <h2>Round blob beside a streak</h2>
+        <p class="lede">Both surfaces sit under the same key light. The chrome sphere is isotropic. The disc has grooves, so its highlight stretches.</p>
+        <div class="try"><strong>Try this</strong><p>Raise Compare anisotropy on the disc only. The sphere stays round while the disc streak grows.</p></div>
+        <div class="ctrls">
+          <label class="ctrl">Disc aniso
+            <input id="cmp-aniso" type="range" min="0" max="1" step="0.01" value="0.9" />
+            <output id="cmp-aniso-out" for="cmp-aniso">0.90</output>
+          </label>
+          <label class="ctrl">Shared light
+            <input id="cmp-orbit" type="range" min="0" max="360" step="1" value="40" />
+            <output id="cmp-orbit-out" for="cmp-orbit">40°</output>
+          </label>
+        </div>
+      </aside>
+    </section>
+
+    <section class="specimen" id="s03">
+      <div class="view-wrap">
+        <div class="view-label">Satin · weave</div>
+        <div class="view" data-scene="satin" tabindex="0" aria-label="Satin strip with sheen and anisotropy along the weave."></div>
+      </div>
+      <aside class="placard">
+        <p class="kicker">Specimen 03 — Cloth highlights</p>
+        <h2>Satin stretches along the weave</h2>
+        <p class="lede">Soft cloth uses sheen for the velvet glow and anisotropy for the weave direction. Turn Weave angle to align the soft streak with the threads.</p>
+        <div class="try"><strong>Try this</strong><p>Slide Weave angle. Watch the soft highlight travel along the strip.</p></div>
+        <div class="ctrls">
+          <label class="ctrl">Anisotropy
+            <input id="satin-aniso" type="range" min="0" max="1" step="0.01" value="0.7" />
+            <output id="satin-aniso-out" for="satin-aniso">0.70</output>
+          </label>
+          <label class="ctrl">Weave angle
+            <input id="satin-rot" type="range" min="0" max="180" step="1" value="90" />
+            <output id="satin-rot-out" for="satin-rot">90°</output>
+          </label>
+        </div>
+      </aside>
+    </section>
+
+    <section class="specimen" id="s04">
+      <div class="view-wrap">
+        <div class="view-label">Hair · fibers</div>
+        <div class="view" data-scene="hair" tabindex="0" aria-label="Fiber cards with anisotropy along the strand."></div>
+      </div>
+      <aside class="placard">
+        <p class="kicker">Specimen 04 — Hair-like fibers</p>
+        <h2>Strands prefer one direction</h2>
+        <p class="lede">Hair and fur use the same idea as brushed metal. Light streaks along the fiber instead of making a round blob on each strand.</p>
+        <div class="try"><strong>Try this</strong><p>Raise Fiber aniso. Then nudge Strand angle so the bright line follows the cards.</p></div>
+        <div class="ctrls">
+          <label class="ctrl">Fiber aniso
+            <input id="hair-aniso" type="range" min="0" max="1" step="0.01" value="0.95" />
+            <output id="hair-aniso-out" for="hair-aniso">0.95</output>
+          </label>
+          <label class="ctrl">Strand angle
+            <input id="hair-rot" type="range" min="0" max="180" step="1" value="0" />
+            <output id="hair-rot-out" for="hair-rot">0°</output>
+          </label>
+        </div>
+      </aside>
+    </section>
+
+    <section class="real-world" id="real-world" aria-labelledby="real-world-title">
+      <div>
+        <p class="real-world-kicker">After the lab</p>
+        <h2 id="real-world-title">Where you see this</h2>
+        <p class="lede">Anisotropy is everyday craft for people who light brushed metal, satin devices, and hair.</p>
+      </div>
+      <ol class="real-list">
+        <li>
+          <span class="n" aria-hidden="true">01</span>
+          <div>
+            <h3>Brushed trim and hairline aluminum</h3>
+            <p class="job">Automotive CGI artist</p>
+            <p>Automotive CGI artists set anisotropy on brushed trim and hairline aluminum so highlights streak along the brush marks instead of blooming as round blobs on every panel.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">02</span>
+          <div>
+            <h3>Watches, appliances, and satin finishes</h3>
+            <p class="job">3D product visualization artist</p>
+            <p>Product visualization artists dial anisotropy on watch bracelets, appliance doors, and satin bezels so studio lights draw long streaks that match real brushed stock.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">03</span>
+          <div>
+            <h3>Hair and fur highlight streaks</h3>
+            <p class="job">Look-development artist · groom artist</p>
+            <p>Look-dev and groom artists align anisotropy with strand direction so hair catches light in thin bright lines. Without it, digital hair reads like shiny plastic tubes.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">04</span>
+          <div>
+            <h3>Brushed vs polished metal on devices</h3>
+            <p class="job">CMF designer</p>
+            <p>CMF designers compare brushed and polished metal samples under the same lamp. Brushed stock keeps directional streaks; polished stock keeps rounder reflections that feel more mirror-like.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">05</span>
+          <div>
+            <h3>Brushed steel railings and elevator panels</h3>
+            <p class="job">Architectural visualization artist</p>
+            <p>Archviz artists use anisotropy on brushed steel railings and elevator panels so lobby lights streak along the grain instead of spotting every surface with identical round highlights.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="teachers" id="teachers">
+      <div>
+        <h2>For teachers</h2>
+        <p class="lede">Short objectives, one classroom loop, and how anisotropy maps to studio and design practice.</p>
+      </div>
+      <div class="teach-grid">
+        <div class="teach-card">
+          <h3>Learning objectives</h3>
+          <ul>
+            <li>Explain that anisotropy stretches a round highlight into a streak.</li>
+            <li>Predict that brush angle turns the streak with the grooves.</li>
+            <li>Contrast an isotropic chrome sphere with a brushed disc under one light.</li>
+            <li>Connect the same idea to satin weave and hair fibers.</li>
+          </ul>
+        </div>
+        <div class="teach-card">
+          <h3>10-minute classroom activity</h3>
+          <p>1) Look at a brushed phone or laptop edge under a desk lamp. 2) Open Specimen 01 and match the streak direction. 3) On Specimen 02, write Disc aniso to zero and back. 4) Write one sentence on why the chrome sphere stayed round.</p>
+        </div>
+        <div class="teach-card">
+          <h3>Art &amp; design map</h3>
+          <p>Automotive brushed trim, watch and appliance product shots, hair look-dev, CMF metal finish reviews.</p>
+        </div>
+        <div class="teach-card">
+          <h3>Materials science map</h3>
+          <p>Directional microfacet roughness, machining marks, fiber optics of cloth and hair, isotropic vs anisotropic reflectance.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div>How Brushed Metal Streaks · Lesson 11 · Materials · <a href="https://how-surfaces-work-production.up.railway.app/">Lesson 01</a> · <a href="https://how-surfaces-work-l09-preview-production.up.railway.app/scatter/">Lesson 09</a></div>
+      <div><a href="#top">Back to top</a></div>
+    </footer>
+  </div>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
