@@ -64,3 +64,16 @@ Same static hosting pattern. Accent: violet `#b388ff` + cyan `#5ce1e6`.
 - QA hooks: `window.__HSW` on `/sheen/` (same shape as Lesson 01).
 - Preview workflow: branch + PR + separate Railway preview service — do not merge straight to production.
 
+
+## Lesson 12 — How Clear Coats Stack (`/coat/`)
+
+Accent: lacquer red `#ff3b5c`.
+
+### Specimens
+1. **Clearcoat** — car-paint sphere; clearcoat + coat roughness + base roughness
+2. **Compare** — matte base vs same base with lacquer
+3. **Bases** — metallic flake vs dielectric under clearcoat
+
+### Notes
+- MeshPhysicalMaterial `clearcoat` / `clearcoatRoughness` (three.js 0.170).
+- QA: `HSW_URL=<url> PW_ROOT=/workspace/materials-demo node qa-coat.mjs`
