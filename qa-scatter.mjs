@@ -364,13 +364,13 @@ async function runSuite(browserType, label, launchOpts, viewportOpts) {
   await setRange(page, '#wax-scatter', 0.12);
   await waitFrames(page, 5);
   await ensureSceneVisible(page, 'wax');
-  await page.waitForTimeout(400);
-  const lowSc = await sampleViewAt(page, '[data-scene="wax"]', 0.32, 0.42);
+  await page.waitForTimeout(700);
+  const lowSc = await sampleViewAt(page, '[data-scene="wax"]', 0.40, 0.45);
   await setRange(page, '#wax-scatter', 2.2);
   await waitFrames(page, 5);
   await ensureSceneVisible(page, 'wax');
-  await page.waitForTimeout(400);
-  const highSc = await sampleViewAt(page, '[data-scene="wax"]', 0.32, 0.42);
+  await page.waitForTimeout(700);
+  const highSc = await sampleViewAt(page, '[data-scene="wax"]', 0.40, 0.45);
   const dSc = avgDiff(lowSc?.patch, highSc?.patch);
   record(
     `${label}:ctrl-scatter-glow`,

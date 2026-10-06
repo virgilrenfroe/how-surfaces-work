@@ -316,6 +316,12 @@ const waxScene = makeScene(document.querySelector('[data-scene="wax"]'), { bg: 0
   waxScene.userData.controls.enableRotate = false;
   waxScene.userData.controls.enabled = false;
   waxScene.userData.camera.position.set(0, 0.55, 4.0);
+  waxScene.userData.update = () => {
+    const cam = waxScene.userData.camera;
+    const a = cam.aspect || 1;
+    // Landscape phone views are very wide; pull back so both blocks stay in frame.
+    cam.position.z = a > 2.4 ? 5.4 : a > 1.6 ? 4.6 : 4.0;
+  };
   waxScene.userData.applyScatter = (dist, backAmt) => {
     // Larger attenuationDistance → light travels farther → stronger glow
     wax.material.attenuationDistance = dist;
