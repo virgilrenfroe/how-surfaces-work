@@ -648,7 +648,11 @@ function makeCmpScene(name, kind) {
   }
   scene.userData.meshes = { mat, mesh, key, graze };
   scene.userData.kind = kind;
+  // Angle slider owns the camera — leave OrbitControls off so damping
+  // cannot fight shared.viewAngle (especially on short iPhone landscape).
   scene.userData.controls.enableZoom = false;
+  scene.userData.controls.enableRotate = false;
+  scene.userData.controls.enabled = false;
   scene.userData.update = (t, dt, shared) => {
     const ang = shared.viewAngle;
     const cam = scene.userData.camera;
