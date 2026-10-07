@@ -100,6 +100,30 @@
       margin: 0 0 1.75rem;
       font-weight: 500;
     }
+    .hero-sub:has(+ .in-short) { margin-bottom: 1rem; }
+    .in-short {
+      margin: 0 0 1.35rem;
+      max-width: 42ch;
+      padding: 0.05rem 0 0.1rem 0.85rem;
+      border-left: 2px solid var(--accent);
+    }
+    .in-short-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 0.5rem;
+      line-height: 1.3;
+    }
+    .in-short p {
+      margin: 0 0 0.45rem;
+      font-size: 15px;
+      line-height: 1.45;
+      color: var(--cream);
+    }
+    .in-short p:last-child { margin-bottom: 0; }
     .hero-meta {
       display: flex;
       flex-wrap: wrap;
@@ -400,6 +424,59 @@
       max-width: 58ch;
     }
 
+    .faq {
+      border-top: 1px solid var(--line);
+      padding: clamp(2.25rem, 5.5vw, 4.5rem) clamp(1.25rem, 4vw, 3rem);
+      background: #0c0a10;
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: clamp(1.75rem, 4vw, 3.5rem);
+      align-items: start;
+    }
+    .faq h2 {
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: clamp(2.1rem, 5.2vw, 3.5rem);
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin: 0 0 0.85rem;
+      max-width: 12ch;
+    }
+    .faq .lede {
+      color: var(--mute);
+      max-width: 34ch;
+      margin: 0;
+      font-size: 15.5px;
+    }
+    .faq-kicker {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 0.75rem;
+    }
+    .faq-list {
+      display: grid;
+      gap: 0.75rem;
+    }
+    .faq .teach-card h3 {
+      font-family: var(--display);
+      font-size: clamp(1.05rem, 2vw, 1.28rem);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      text-transform: none;
+      color: var(--paper);
+      line-height: 1.25;
+      margin: 0 0 0.45rem;
+    }
+    .faq .teach-card p {
+      margin: 0;
+      font-size: 14.5px;
+      color: var(--cream);
+      max-width: 62ch;
+    }
+
     .teachers {
       border-top: 1px solid var(--line);
       padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 4vw, 3rem);
@@ -539,10 +616,10 @@
         padding-bottom: 2rem;
       }
       .hero h1 { max-width: none; }
-      .specimen, .centerpiece .placard, .teachers, .map-cols, .real-world {
+      .specimen, .centerpiece .placard, .teachers, .map-cols, .real-world, .faq {
         grid-template-columns: 1fr;
       }
-      .real-world { gap: 1.5rem; }
+      .real-world, .faq { gap: 1.5rem; }
       .real-list > li { grid-template-columns: 2rem minmax(0, 1fr); }
 
       .placard { border-left: none; border-top: 1px solid var(--line); }
@@ -758,6 +835,12 @@
         <p class="hero-kicker">Lesson 03 · Materials</p>
         <h1>How Soft Surfaces <em>Shimmer</em></h1>
         <p class="hero-sub">Velvet edges. Soap-film color. Soft light inside wax. Three finishes that change with the angle you look.</p>
+        <div class="in-short">
+          <h2 class="in-short-label">In short</h2>
+          <p>Sheen is a soft glow from cloth fibers when you look almost along the surface.</p>
+          <p>Iridescence is a color shift from a very thin film. The film color changes when you tilt the surface.</p>
+          <p>Soft transmission is light that enters a material and scatters inside, as in wax or jade.</p>
+        </div>
         <div class="hero-meta">
           <div>Time <span>20 min</span></div>
           <div>You will learn <span>sheen, iridescence, soft transmission</span></div>
@@ -989,6 +1072,36 @@
           </div>
         </li>
       </ol>
+    </section>
+
+    <section class="faq" id="common-mistakes" aria-labelledby="faq-title">
+      <div>
+        <p class="faq-kicker">Check the idea</p>
+        <h2 id="faq-title">Common mistakes</h2>
+        <p class="lede">These are common mix-ups about soft finishes. Each answer uses the same ideas as the lab.</p>
+      </div>
+      <div class="faq-list">
+        <article class="teach-card">
+          <h3>Is sheen the same as specular?</h3>
+          <p>No. Specular is a mirror highlight. Sheen is a soft glow from fibers at the rim. The front of the cloth can stay dull while the edge glows.</p>
+        </article>
+        <article class="teach-card">
+          <h3>Why does iridescence need a tilt?</h3>
+          <p>A thin film sends back different colors at different angles. Face-on, the shift is weak. Tilt the surface and the hue moves.</p>
+        </article>
+        <article class="teach-card">
+          <h3>Is soft transmission clear glass?</h3>
+          <p>No. Clear glass lets you see through the object. Soft transmission scatters light inside wax, jade, or milky plastic. The solid glows. It does not become a window.</p>
+        </article>
+        <article class="teach-card">
+          <h3>Can sheen show when you look straight at the cloth?</h3>
+          <p>Sheen is strongest at a grazing angle, almost along the surface. Straight on, the fibers catch less light and the glow fades.</p>
+        </article>
+        <article class="teach-card">
+          <h3>Is iridescence just a rainbow painted on the surface?</h3>
+          <p>No. A painted rainbow stays the same when you move. Thin-film color changes with the angle of view. Tilt the surface and the hue shifts.</p>
+        </article>
+      </div>
     </section>
 
     <section class="teachers" id="teachers">

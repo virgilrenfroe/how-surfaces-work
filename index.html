@@ -101,6 +101,30 @@
       margin: 0 0 1.75rem;
       font-weight: 500;
     }
+    .hero-sub:has(+ .in-short) { margin-bottom: 1rem; }
+    .in-short {
+      margin: 0 0 1.35rem;
+      max-width: 42ch;
+      padding: 0.05rem 0 0.1rem 0.85rem;
+      border-left: 2px solid var(--accent);
+    }
+    .in-short-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 0.5rem;
+      line-height: 1.3;
+    }
+    .in-short p {
+      margin: 0 0 0.45rem;
+      font-size: 15px;
+      line-height: 1.45;
+      color: var(--cream);
+    }
+    .in-short p:last-child { margin-bottom: 0; }
     .hero-meta {
       display: flex;
       flex-wrap: wrap;
@@ -414,6 +438,59 @@
       max-width: 58ch;
     }
 
+    .faq {
+      border-top: 1px solid var(--line);
+      padding: clamp(2.25rem, 5.5vw, 4.5rem) clamp(1.25rem, 4vw, 3rem);
+      background: #0e0c0a;
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: clamp(1.75rem, 4vw, 3.5rem);
+      align-items: start;
+    }
+    .faq h2 {
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: clamp(2.1rem, 5.2vw, 3.5rem);
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin: 0 0 0.85rem;
+      max-width: 12ch;
+    }
+    .faq .lede {
+      color: var(--mute);
+      max-width: 34ch;
+      margin: 0;
+      font-size: 15.5px;
+    }
+    .faq-kicker {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 0.75rem;
+    }
+    .faq-list {
+      display: grid;
+      gap: 0.75rem;
+    }
+    .faq .teach-card h3 {
+      font-family: var(--display);
+      font-size: clamp(1.05rem, 2vw, 1.28rem);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      text-transform: none;
+      color: var(--paper);
+      line-height: 1.25;
+      margin: 0 0 0.45rem;
+    }
+    .faq .teach-card p {
+      margin: 0;
+      font-size: 14.5px;
+      color: var(--cream);
+      max-width: 62ch;
+    }
+
     .teachers {
       border-top: 1px solid var(--line);
       padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 4vw, 3rem);
@@ -527,10 +604,10 @@
         padding-bottom: 2rem;
       }
       .hero h1 { max-width: none; }
-      .specimen, .centerpiece .placard, .teachers, .map-cols, .real-world {
+      .specimen, .centerpiece .placard, .teachers, .map-cols, .real-world, .faq {
         grid-template-columns: 1fr;
       }
-      .real-world { gap: 1.5rem; }
+      .real-world, .faq { gap: 1.5rem; }
       .real-list > li { grid-template-columns: 2rem minmax(0, 1fr); }
 
       .placard { border-left: none; border-top: 1px solid var(--line); }
@@ -740,6 +817,12 @@
         <p class="hero-kicker">Lesson 01 · Materials</p>
         <h1>How <em>Surfaces</em> Work</h1>
         <p class="hero-sub">A materials lab for art, design, and intro materials science. Same shape. Different light rules.</p>
+        <div class="in-short">
+          <h2 class="in-short-label">In short</h2>
+          <p>A surface finish is how a material returns light to your eye.</p>
+          <p>Low roughness looks like chrome, higher roughness looks like satin, metalness tints metal reflections, and clearcoat adds a glossy layer on paint.</p>
+          <p>A MatCap fakes the light with one stored image. PBR computes the light from the scene.</p>
+        </div>
         <div class="hero-meta">
           <div>Time <span>20 min</span></div>
           <div>You will learn <span>why chrome and satin look different</span></div>
@@ -948,6 +1031,36 @@
           </div>
         </li>
       </ol>
+    </section>
+
+    <section class="faq" id="common-mistakes" aria-labelledby="faq-title">
+      <div>
+        <p class="faq-kicker">Check the idea</p>
+        <h2 id="faq-title">Common mistakes</h2>
+        <p class="lede">These are common mix-ups. Each answer uses the same ideas as the lab.</p>
+      </div>
+      <div class="faq-list">
+        <article class="teach-card">
+          <h3>Is MatCap the same as PBR?</h3>
+          <p>No. A MatCap fakes light with one stored image. PBR computes light from the scene. Move the lamp, and only the PBR finish changes.</p>
+        </article>
+        <article class="teach-card">
+          <h3>Does high roughness mean the object is dirty?</h3>
+          <p>No. Roughness is how much the tiny surface bumps spread the highlight. A clean matte eraser is rough. A polished spoon is smooth.</p>
+        </article>
+        <article class="teach-card">
+          <h3>Why do metals tint reflections?</h3>
+          <p>A metal reflects some colors and absorbs others. The highlight takes the metal color. Paint and plastic keep a white highlight.</p>
+        </article>
+        <article class="teach-card">
+          <h3>Does clearcoat replace the base color?</h3>
+          <p>No. Clearcoat is a thin glossy layer on top of the color, like lacquer on a car. The paint color stays. The extra layer adds a sharper gloss.</p>
+        </article>
+        <article class="teach-card">
+          <h3>Why does a MatCap ignore a moving light?</h3>
+          <p>The light in a MatCap is already stored in the image. It does not read the lamp in the room. PBR reads that lamp each time.</p>
+        </article>
+      </div>
     </section>
 
     <section class="teachers" id="teachers">
