@@ -100,6 +100,30 @@
       margin: 0 0 1.75rem;
       font-weight: 500;
     }
+    .hero-sub:has(+ .in-short) { margin-bottom: 1rem; }
+    .in-short {
+      margin: 0 0 1.35rem;
+      max-width: 42ch;
+      padding: 0.05rem 0 0.1rem 0.85rem;
+      border-left: 2px solid var(--accent);
+    }
+    .in-short-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 0.5rem;
+      line-height: 1.3;
+    }
+    .in-short p {
+      margin: 0 0 0.45rem;
+      font-size: 15px;
+      line-height: 1.45;
+      color: var(--cream);
+    }
+    .in-short p:last-child { margin-bottom: 0; }
     .hero-meta {
       display: flex;
       flex-wrap: wrap;
@@ -320,6 +344,139 @@
     }
     .ctrl output { text-align: right; color: var(--paper); }
 
+
+    /* —— Where you see this (real-world jobs) —— */
+    .real-world {
+      border-top: 1px solid var(--line);
+      padding: clamp(2.25rem, 5.5vw, 4.5rem) clamp(1.25rem, 4vw, 3rem);
+      background: #100e12;
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: clamp(1.75rem, 4vw, 3.5rem);
+      align-items: start;
+    }
+    .real-world h2 {
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: clamp(2.1rem, 5.2vw, 3.5rem);
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin: 0 0 0.85rem;
+      max-width: 12ch;
+    }
+    .real-world .lede {
+      color: var(--mute);
+      max-width: 34ch;
+      margin: 0;
+      font-size: 15.5px;
+    }
+    .real-world-kicker {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 0.75rem;
+    }
+    .real-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0;
+    }
+    .real-list > li {
+      display: grid;
+      grid-template-columns: 2.4rem minmax(0, 1fr);
+      gap: 0.85rem 1rem;
+      padding: 1.15rem 0 1.25rem;
+      border-top: 1px solid var(--line);
+    }
+    .real-list > li:last-child { border-bottom: 1px solid var(--line); }
+    .real-list .n {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      padding-top: 0.2rem;
+    }
+    .real-list h3 {
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: clamp(1.15rem, 2.4vw, 1.45rem);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin: 0 0 0.35rem;
+      color: var(--paper);
+    }
+    .real-list .job {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--steel);
+      margin: 0 0 0.55rem;
+    }
+    .real-list p {
+      margin: 0;
+      color: var(--cream);
+      font-size: 15px;
+      max-width: 58ch;
+    }
+
+    .faq {
+      border-top: 1px solid var(--line);
+      padding: clamp(2.25rem, 5.5vw, 4.5rem) clamp(1.25rem, 4vw, 3rem);
+      background: #0c0a10;
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: clamp(1.75rem, 4vw, 3.5rem);
+      align-items: start;
+    }
+    .faq h2 {
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: clamp(2.1rem, 5.2vw, 3.5rem);
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin: 0 0 0.85rem;
+      max-width: 12ch;
+    }
+    .faq .lede {
+      color: var(--mute);
+      max-width: 34ch;
+      margin: 0;
+      font-size: 15.5px;
+    }
+    .faq-kicker {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 0.75rem;
+    }
+    .faq-list {
+      display: grid;
+      gap: 0.75rem;
+    }
+    .faq .teach-card h3 {
+      font-family: var(--display);
+      font-size: clamp(1.05rem, 2vw, 1.28rem);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      text-transform: none;
+      color: var(--paper);
+      line-height: 1.25;
+      margin: 0 0 0.45rem;
+    }
+    .faq .teach-card p {
+      margin: 0;
+      font-size: 14.5px;
+      color: var(--cream);
+      max-width: 62ch;
+    }
+
     .teachers {
       border-top: 1px solid var(--line);
       padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 4vw, 3rem);
@@ -459,9 +616,12 @@
         padding-bottom: 2rem;
       }
       .hero h1 { max-width: none; }
-      .specimen, .centerpiece .placard, .teachers, .map-cols {
+      .specimen, .centerpiece .placard, .teachers, .map-cols, .real-world, .faq {
         grid-template-columns: 1fr;
       }
+      .real-world, .faq { gap: 1.5rem; }
+      .real-list > li { grid-template-columns: 2rem minmax(0, 1fr); }
+
       .placard { border-left: none; border-top: 1px solid var(--line); }
       .centerpiece .views { grid-template-columns: 1fr; }
       .centerpiece .view-pane { border-right: none; border-bottom: 1px solid var(--line); min-height: 42vh; }
@@ -675,6 +835,12 @@
         <p class="hero-kicker">Lesson 03 · Materials</p>
         <h1>How Soft Surfaces <em>Shimmer</em></h1>
         <p class="hero-sub">Velvet edges. Soap-film color. Soft light inside wax. Three finishes that change with the angle you look.</p>
+        <div class="in-short">
+          <h2 class="in-short-label">In short</h2>
+          <p>Sheen is a soft glow from cloth fibers when you look almost along the surface.</p>
+          <p>Iridescence is a color shift from a very thin film. The film color changes when you tilt the surface.</p>
+          <p>Soft transmission is light that enters a material and scatters inside, as in wax or jade.</p>
+        </div>
         <div class="hero-meta">
           <div>Time <span>20 min</span></div>
           <div>You will learn <span>sheen, iridescence, soft transmission</span></div>
@@ -855,6 +1021,87 @@
           </div>
         </div>
       </aside>
+    </section>
+
+
+    <section class="real-world" id="real-world" aria-labelledby="real-world-title">
+      <div>
+        <p class="real-world-kicker">After the lab</p>
+        <h2 id="real-world-title">Where you see this</h2>
+        <p class="lede">Soft finishes show up in costumes, paint, packaging, and product shots. People in named jobs use sheen, thin-film color, and soft transmission every day.</p>
+      </div>
+      <ol class="real-list">
+        <li>
+          <span class="n" aria-hidden="true">01</span>
+          <div>
+            <h3>Velvet costumes and soft furnishings</h3>
+            <p class="job">Look-development artist · texture artist</p>
+            <p>Look-development and texture artists build fabric materials for characters and props. Sheen helps velvet and fleece catch a bright rim of light at grazing angles without turning into shiny plastic.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">02</span>
+          <div>
+            <h3>Color-shift car paint and cosmetics</h3>
+            <p class="job">Automotive CGI artist · CMF designer</p>
+            <p>Some automotive paints and cosmetics use thin-film interference pigments that change color with viewing angle. Artists and CMF designers check those shifts under moving light so a flip-flop paint or a pearlescent finish matches the real pigment.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">03</span>
+          <div>
+            <h3>Soap films, oil slicks, and insect wings</h3>
+            <p class="job">Look-development artist</p>
+            <p>Thin-film iridescence is the same physics that colors a soap bubble. Look-development artists use it for bubbles, oil on water, and insect wings so hue bands move when the camera or the light moves.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">04</span>
+          <div>
+            <h3>Wax, jade, and translucent packaging</h3>
+            <p class="job">3D product visualization artist</p>
+            <p>Catalog and packaging images of candles, soap, and milky plastic bottles often use soft transmission so light enters the volume and scatters. Visualization artists set that glow so the object reads as wax or jade, not as colored glass.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">05</span>
+          <div>
+            <h3>Soft plastics and lit product parts</h3>
+            <p class="job">Industrial designer · materials scientist</p>
+            <p>Industrial designers and materials scientists study how light scatters in translucent plastics, wax, and stone. Soft transmission in a render helps them show whether a part will look solid, milky, or warmly lit from behind.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="faq" id="common-mistakes" aria-labelledby="faq-title">
+      <div>
+        <p class="faq-kicker">Check the idea</p>
+        <h2 id="faq-title">Common mistakes</h2>
+        <p class="lede">These are common mix-ups about soft finishes. Each answer uses the same ideas as the lab.</p>
+      </div>
+      <div class="faq-list">
+        <article class="teach-card">
+          <h3>Is sheen the same as specular?</h3>
+          <p>No. Specular is a mirror highlight. Sheen is a soft glow from fibers at the rim. The front of the cloth can stay dull while the edge glows.</p>
+        </article>
+        <article class="teach-card">
+          <h3>Why does iridescence need a tilt?</h3>
+          <p>A thin film sends back different colors at different angles. Face-on, the shift is weak. Tilt the surface and the hue moves.</p>
+        </article>
+        <article class="teach-card">
+          <h3>Is soft transmission clear glass?</h3>
+          <p>No. Clear glass lets you see through the object. Soft transmission scatters light inside wax, jade, or milky plastic. The solid glows. It does not become a window.</p>
+        </article>
+        <article class="teach-card">
+          <h3>Can sheen show when you look straight at the cloth?</h3>
+          <p>Sheen is strongest at a grazing angle, almost along the surface. Straight on, the fibers catch less light and the glow fades.</p>
+        </article>
+        <article class="teach-card">
+          <h3>Is iridescence just a rainbow painted on the surface?</h3>
+          <p>No. A painted rainbow stays the same when you move. Thin-film color changes with the angle of view. Tilt the surface and the hue shifts.</p>
+        </article>
+      </div>
     </section>
 
     <section class="teachers" id="teachers">
