@@ -320,7 +320,7 @@ async function runSuite(browserType, label, launchOpts, viewportOpts) {
     const txt = [document.body.innerText, document.title,
       ...[...document.querySelectorAll('[aria-label],[alt],meta[name=description],meta[property^="og:"]')]
         .map((e) => e.getAttribute('aria-label') || e.getAttribute('alt') || e.getAttribute('content') || '')].join('\n');
-    const bad = /webgl|three\.js|\bdpr\b|virgil|\bqa\b|reduced[- ]motion|safe mode|coarse pointer|\bfps\b|frame rate|pmrem|roomenvironment|\bcontext\b/i;
+    const bad = /webgl|three\.js|\bdpr\b|\bqa\b|reduced[- ]motion|safe mode|coarse pointer|\bfps\b|frame rate|pmrem|roomenvironment|\bcontext\b/i;
     return txt.split('\n').filter((l) => bad.test(l)).slice(0, 5);
   });
   record(`${label}:audience-copy`, devCopy.length === 0, JSON.stringify(devCopy));

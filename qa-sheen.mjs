@@ -155,7 +155,7 @@ async function runSuite(browserType, label, launchOpts, viewportOpts) {
   // audience lock: no developer/status text
   const badCopy = await page.evaluate(() => {
     const t = document.body.innerText.toLowerCase();
-    const banned = ['webgl', 'dpr', 'three.js', 'reduced-motion', 'frame rate', 'virgil', 'qa', 'context lost'];
+    const banned = ['webgl', 'dpr', 'three.js', 'reduced-motion', 'frame rate', 'qa', 'context lost'];
     return banned.filter((b) => t.includes(b));
   });
   record(`${label}:audience-lock`, badCopy.length === 0, badCopy.join(','));

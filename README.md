@@ -1,11 +1,10 @@
 # How Surfaces Work
 
-A materials lab for art, design, and intro materials science — by Virgil Renfroe.
+A materials lab for art, design, and intro materials science.
 
 **Live preview:** https://how-surfaces-work-production.up.railway.app/
 
-GitHub Pages (same source): https://virgilrenfroe.github.io/how-surfaces-work/  
-Repo: https://github.com/virgilrenfroe/how-surfaces-work
+GitHub Pages (same source): https://seethesystems.com/how-surfaces-work/
 
 Lesson 01 at `/`. Lesson 03 at `/sheen/`. Single-page three.js exhibits. One shared WebGL context; specimens render via scissor/viewport into DOM regions (three.js multiple-elements pattern).
 
@@ -27,7 +26,7 @@ python3 -m http.server 8877
 - three.js `0.170.0` (CDN import map)
 - Google Fonts: Bricolage Grotesque, Instrument Sans, Space Mono
 - No backend, no HDR downloads
-- Hosted on Railway (Caddy static) with GitHub Pages as the matching virgilrenfroe pattern when available
+- Hosted on Railway (Caddy static) with GitHub Pages as the matching pattern when available
 
 ## Technical notes (moved out of the learner UI)
 
